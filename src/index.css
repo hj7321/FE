@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "SUIT-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "SUIT-Regular";
+  font-weight: normal;
+}
+
+@theme {
+  /* color */
+  --color-common: #e9c2ff;
+  --color-selected: #c895e6;
+
+  --color-day1: #fb7e7e;
+  --color-day2: #fbba7e;
+  --color-day3: #fbe67e;
+  --color-day4: #b0fb7e;
+  --color-day5: #7efbb4;
+  --color-day6: #7efbf9;
+  --color-day7: #7ecffb;
+  --color-day8: #7ea8fb;
+  --color-day9: #847efb;
+  --color-day10: #ba7efb;
+  --color-day11: #f57efb;
+  --color-day12: #fb7ea5;
+  --color-day13: #d1999b;
+  --color-day14: #b39c9c;
+}
+
+@layer utilities {
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 7px; /* 스크롤바 너비 */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: white; /* 스크롤 트랙 배경 색상 */
+    border-radius: 0px 10px 10px 0px; /* 둥근 모서리 */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: #c2c2c2; /* 스크롤바 핸들 색상 */
+    border-radius: 6px; /* 둥근 모서리 */
+    border: 2px solid #c2c2c2; /* 핸들 테두리 */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: #b2b2b2; /* 스크롤바 핸들 색상 */
+    border: 2px solid #b2b2b2; /* Hover 시 색상 */
+  }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
