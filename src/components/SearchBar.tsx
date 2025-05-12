@@ -1,16 +1,26 @@
+import clsx from "clsx";
+
 interface SearchBarProps {
   placeholder: string;
+  main?: boolean;
+  placeExploration?: boolean;
 }
 
-const SearchBar = ({ placeholder }: SearchBarProps) => {
+const SearchBar = ({ placeholder, main, placeExploration }: SearchBarProps) => {
   return (
-    <div className="flex justify-between px-[20px] py-[10px] bg-white rounded-[6px] w-[500px] h-[60px] [box-shadow:6px_6px_10px_rgba(0,0,0)]">
+    <div
+      className={clsx(
+        "flex justify-between px-[20px] py-[10px] bg-white rounded-[6px] w-[450px] h-[55px]",
+        main && "[box-shadow:6px_6px_10px_rgba(0,0,0)]",
+        placeExploration && "[box-shadow:6px_6px_10px_rgba(0,0,0,0.2)]"
+      )}
+    >
       <input
         type="text"
         placeholder={`${placeholder} 검색하세요.`}
-        className="outline-none w-[400px] text-black placeholder:text-[#b8b8b8] placeholder:text-[14px]"
+        className="outline-none w-[370px] text-black placeholder:text-[#b8b8b8] placeholder:text-[14px]"
       />
-      <img src="/images/search.svg" alt="search" />
+      <img src="/images/search.svg" alt="search" className="text-[10px]" />
     </div>
   );
 };
