@@ -1,7 +1,11 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 
-const TopButton = () => {
+interface TopButtonProps {
+  isExistedLikeButton: boolean;
+}
+
+const TopButton = ({ isExistedLikeButton }: TopButtonProps) => {
   const [showButton, setShowButton] = useState<boolean>(false);
 
   useEffect(() => {
@@ -29,7 +33,8 @@ const TopButton = () => {
     <button
       className={clsx(
         showButton ? "flex" : "hidden",
-        "fixed bottom-[80px] right-[10px]"
+        "fixed right-[10px]",
+        isExistedLikeButton ? "bottom-[150px]" : "bottom-[80px]"
       )}
       onClick={ScrollToTop}
     >
