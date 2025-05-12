@@ -1,5 +1,11 @@
+import AuthForm from "../../components/auth/AuthForm";
+
 const LoginPage = () => {
-  return <div>로그인 페이지</div>;
+  return (
+    <div className="h-screen flex items-center justify-center">
+      <AuthForm pageName="login" />
+    </div>
+  );
 };
 
 export default LoginPage;
