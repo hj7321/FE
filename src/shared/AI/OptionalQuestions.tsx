@@ -1,5 +1,5 @@
 import PreferenceButton from "./PreferenceButton";
-import TransferButton from "./TransferButton";
+import TransportationButton from "./TransportationButton";
 
 const OptionalQuestions = () => {
   return (
@@ -7,11 +7,11 @@ const OptionalQuestions = () => {
       <div>
         <h1 className="mb-[5px]">1. 어떤 교통수단을 이용하실 예정인가요?</h1>
         <div className="ml-[12px] flex gap-[10px]">
-          <TransferButton>버스</TransferButton>
-          <TransferButton>택시</TransferButton>
-          <TransferButton>지하철</TransferButton>
-          <TransferButton>렌트카</TransferButton>
-          <TransferButton>도보</TransferButton>
+          <TransportationButton buttonName="버스" />
+          <TransportationButton buttonName="택시" />
+          <TransportationButton buttonName="지하철" />
+          <TransportationButton buttonName="렌트카" />
+          <TransportationButton buttonName="도보" />
         </div>
       </div>
       <div>
@@ -20,16 +20,16 @@ const OptionalQuestions = () => {
           (중복 선택 가능, 선택하지 않아도 됨)
         </h6>
         <div className="ml-[15px] flex flex-col gap-[10px]">
-          <PreferenceButton>힐링</PreferenceButton>
-          <PreferenceButton>관광</PreferenceButton>
-          <PreferenceButton>액티비티</PreferenceButton>
-          <PreferenceButton>핫 플레이스</PreferenceButton>
-          <PreferenceButton>맛집 탐방</PreferenceButton>
-          <PreferenceButton>가족 여행</PreferenceButton>
-          <PreferenceButton>커플 여행</PreferenceButton>
-          <PreferenceButton>호캉스</PreferenceButton>
-          <PreferenceButton>쇼핑</PreferenceButton>
-          <PreferenceButton>역사/교육</PreferenceButton>
+          <PreferenceButton buttonName="힐링" questionType="여행 목적" />
+          <PreferenceButton buttonName="관광" questionType="여행 목적" />
+          <PreferenceButton buttonName="액티비티" questionType="여행 목적" />
+          <PreferenceButton buttonName="핫 플레이스" questionType="여행 목적" />
+          <PreferenceButton buttonName="맛집 탐방" questionType="여행 목적" />
+          <PreferenceButton buttonName="가족 여행" questionType="여행 목적" />
+          <PreferenceButton buttonName="커플 여행" questionType="여행 목적" />
+          <PreferenceButton buttonName="호캉스" questionType="여행 목적" />
+          <PreferenceButton buttonName="쇼핑" questionType="여행 목적" />
+          <PreferenceButton buttonName="역사/교육" questionType="여행 목적" />
         </div>
       </div>
       <div>
@@ -38,10 +38,13 @@ const OptionalQuestions = () => {
           (중복 선택 가능, 선택하지 않아도 됨)
         </h6>
         <div className="ml-[15px] flex flex-col gap-[10px]">
-          <PreferenceButton>호텔</PreferenceButton>
-          <PreferenceButton>펜션</PreferenceButton>
-          <PreferenceButton>에어비앤비</PreferenceButton>
-          <PreferenceButton>게스트하우스</PreferenceButton>
+          <PreferenceButton buttonName="호텔" questionType="숙소 유형" />
+          <PreferenceButton buttonName="펜션" questionType="숙소 유형" />
+          <PreferenceButton buttonName="에어비앤비" questionType="숙소 유형" />
+          <PreferenceButton
+            buttonName="게스트하우스"
+            questionType="숙소 유형"
+          />
         </div>
       </div>
       <div>
@@ -50,10 +53,16 @@ const OptionalQuestions = () => {
           (중복 선택 가능, 선택하지 않아도 됨)
         </h6>
         <div className="ml-[15px] flex flex-col gap-[10px]">
-          <PreferenceButton>현지 맛집</PreferenceButton>
-          <PreferenceButton>분위기 좋은 카페</PreferenceButton>
-          <PreferenceButton>특산물</PreferenceButton>
-          <PreferenceButton>고급 레스토랑</PreferenceButton>
+          <PreferenceButton buttonName="현지 맛집" questionType="식당 유형" />
+          <PreferenceButton
+            buttonName="분위기 좋은 카페"
+            questionType="식당 유형"
+          />
+          <PreferenceButton buttonName="특산물" questionType="식당 유형" />
+          <PreferenceButton
+            buttonName="고급 레스토랑"
+            questionType="식당 유형"
+          />
         </div>
       </div>
     </div>
