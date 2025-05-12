@@ -14,10 +14,12 @@ body {
 }
 
 @theme {
-  /* color */
+  --color-unselected: #e2d3eb;
   --color-common: #e9c2ff;
   --color-selected: #c895e6;
+}
 
+:root {
   --color-day1: #fb7e7e;
   --color-day2: #fbba7e;
   --color-day3: #fbe67e;
@@ -40,7 +42,11 @@ body {
   }
 
   .scrollbar-custom::-webkit-scrollbar-track {
-    background: white; /* 스크롤 트랙 배경 색상 */
+    background: rgb(233, 233, 233); /* 스크롤 트랙 배경 색상 */
+    border-radius: 10px; /* 둥근 모서리 */
+  }
+
+  .scrollbar-partial-rounded .scrollbar-custom::-webkit-scrollbar-track {
     border-radius: 0px 10px 10px 0px; /* 둥근 모서리 */
   }
 
@@ -51,8 +57,8 @@ body {
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background-color: #b2b2b2; /* 스크롤바 핸들 색상 */
-    border: 2px solid #b2b2b2; /* Hover 시 색상 */
+    background-color: #aaaaaa; /* 스크롤바 핸들 색상 */
+    border: 2px solid #aaaaaa; /* Hover 시 색상 */
   }
 }
 
