@@ -5,14 +5,14 @@ const Header = () => {
     <header className="px-[100px] py-[10px] flex items-center justify-between">
       <Link
         to="/"
-        className="flex gap-[10px] transition-transform items-center duration-300 hover:scale-103"
+        className="flex gap-[10px] transition-transform items-center"
       >
         <img
           src="/images/logo.svg"
           alt="logo"
-          className="[filter:drop-shadow(5px_5px_2px_rgba(0,0,0,0.25))] h-[53px] aspect-[4/5]"
+          className="[filter:drop-shadow(5px_5px_2px_rgba(0,0,0,0.25))] h-[53px] aspect-[4/5] hover:[filter:drop-shadow(5px_5px_2px_rgba(0,0,0,0.5))]"
         />
-        <p className="font-bold text-[35px] [text-shadow:3px_3px_5px_rgba(0,0,0,0.25)]">
+        <p className="font-bold text-[35px] [text-shadow:3px_3px_5px_rgba(0,0,0,0.25)] hover:[text-shadow:3px_3px_5px_rgba(0,0,0,0.5)]">
           Tranner
         </p>
       </Link>
