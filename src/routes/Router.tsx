@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       },
       // 주요 서비스 페이지
       {
-        path: "/place-exploration",
+        path: "/place-exploration/:place",
         element: <PlaceExplorationPage />,
       },
       {
