@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import PlaceInfo from "../information/PlaceInfo";
 import { useModalStore } from "../../stores/modal.store";
-import { usefavoriteListStore } from "../../stores/favoriteList.store";
+import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
 interface PlaceModalProps {
   cardName: string;
@@ -11,7 +11,7 @@ interface PlaceModalProps {
 
 const PlaceModal = ({ cardName, cardImg, isNeededButton }: PlaceModalProps) => {
   const { closeModal } = useModalStore();
-  const { addFavoriteList } = usefavoriteListStore();
+  const { addFavoriteList } = useFavoriteListStore();
 
   const handleAddFavoriteList = () => {
     addFavoriteList(cardName, cardImg);
