@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router";
-import CityBasicInfo from "../information/CityBasicInfo";
+import CityBasicInfo from "../information/basicInfo/CityBasicInfo";
 import CityInfo from "../information/CityInfo";
 import { useModalStore } from "../../stores/modal.store";
+import { CITY_TO_SKYSCANNER_CODE } from "../../constants/cityCodes";
 
 interface CityModalProps {
   cardName: string;
@@ -11,6 +12,16 @@ interface CityModalProps {
 const CityModal = ({ cardName, cardImg }: CityModalProps) => {
   const { closeModal } = useModalStore();
   const navigate = useNavigate();
+
+  const city = cardName.split(" ")[1];
+
+  const accommodationBookingURL = `https://www.booking.com/searchresults.ko.html?ss=${encodeURIComponent(
+    cardName
+  )}`;
+
+  const from = CITY_TO_SKYSCANNER_CODE["서울"];
+  const to = CITY_TO_SKYSCANNER_CODE[city];
+  const airlineTicketBookingURL = `https://www.skyscanner.co.kr/transport/flights/${from}/${to}`;
 
   const handleDecideTravelArea = () => {
     closeModal();
@@ -31,8 +42,8 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
       </button>
       <div className="flex flex-col gap-[20px] w-3/5">
         <h1 className="font-bold text-[30px]">{cardName}</h1>
-        <CityBasicInfo />
-        <CityInfo />
+        <CityBasicInfo cardName={cardName} />
+        <CityInfo cardName={cardName} />
       </div>
       <div className="flex flex-col justify-end w-1/2 gap-[15px]">
         <img
@@ -41,22 +52,32 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
           className="text-[14px] h-[400px] w-full object-cover"
         />
         <div className="flex justify-between">
-          <button className="w-[100px] rounded-[4px] flex justify-center items-center gap-[5px] tsext-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]">
+          <a
+            href={accommodationBookingURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-[100px] rounded-[4px] flex justify-center items-center gap-[5px] tsext-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+          >
             <img
               src="/images/accommodation.svg"
               alt="accommodation"
               className="h-[17px] w-[25px]"
             />
             <p>숙소</p>
-          </button>
-          <button className="w-[100px] rounded-[4px] flex justify-center items-center gap-[5px] text-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]">
+          </a>
+          <a
+            href={airlineTicketBookingURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-[100px] rounded-[4px] flex justify-center items-center gap-[5px] text-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+          >
             <img
               src="/images/plane-ticket.svg"
               alt="plane-ticket"
               className="h-[20px] w-[25px]"
             />
             <p>항공권</p>
-          </button>
+          </a>
           <button
             onClick={handleDecideTravelArea}
             className="w-[210px] text-center rounded-[4px] text-white bg-common py-[10px] px-[15px] text-[14px] hover:bg-selected hover:cursor-pointer"
