@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router";
 import FavoriteCard from "./card/FavoriteCard";
-import { usefavoriteListStore } from "../stores/favoriteList.store";
+import { useFavoriteListStore } from "../stores/favoriteList.store";
 
 const FavoritePlaceListBox = () => {
-  const { favoriteList } = usefavoriteListStore();
+  const { favoriteList } = useFavoriteListStore();
   const navigate = useNavigate();
 
   const handlePlanTravel = () => {

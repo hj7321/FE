@@ -1,11 +1,11 @@
 import { useState } from "react";
 import FavoritePlaceListBox from "../FavoritePlaceListBox";
 import clsx from "clsx";
-import { usefavoriteListStore } from "../../stores/favoriteList.store";
+import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
 const FavoritePlaceListButton = () => {
   const [showBox, setShowBox] = useState<boolean>(false);
-  const { favoriteList } = usefavoriteListStore();
+  const { favoriteList } = useFavoriteListStore();
 
   return (
     <div>
