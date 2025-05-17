@@ -2,13 +2,14 @@ import { useParams } from "react-router";
 import FavoritePlaceListButton from "../../components/button/FavoritePlaceListButton";
 import PlaceCard from "../../components/card/PlaceCard";
 import SearchBar from "../../components/SearchBar";
-import { usefavoriteListStore } from "../../stores/favoriteList.store";
+import { useFavoriteListStore } from "../../stores/favoriteList.store";
 import { useEffect, useRef } from "react";
+import Slider from "../../components/slider/Slider";
 
 const PlaceExplorationPage = () => {
   const { place } = useParams();
   const country = place?.split(" ")[0];
-  const { resetFavoriteList } = usefavoriteListStore();
+  const { resetFavoriteList } = useFavoriteListStore();
   const currentPathRef = useRef(location.pathname);
 
   useEffect(() => {
@@ -29,7 +30,9 @@ const PlaceExplorationPage = () => {
       </section>
       <section className="my-[12px]">
         <h1 className="text-[22px] font-bold">인기 장소 TOP 20</h1>
-        <div>슬라이드 부분</div>
+        <div>
+          <Slider />
+        </div>
       </section>
       <section className="flex flex-col gap-[25px]">
         <div className="flex flex-col gap-[8px] items-center">
