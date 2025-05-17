@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useEssentialSurveyStore } from "../../stores/essentialSurvey.store";
-import { useOptionalSurveyStore } from "../../stores/optionalSurvey.store";
 
 interface SurveyHeaderProps {
   isClickedEssential: boolean;
@@ -12,15 +11,15 @@ const SurveyHeader = ({
   setIsClickedEssential,
 }: SurveyHeaderProps) => {
   const { people, startDate, endDate, budget } = useEssentialSurveyStore();
-  const {
-    transportation,
-    preferTravelPurpose,
-    nonPreferTravelPurpose,
-    preferAccommodation,
-    nonPreferAccommodation,
-    preferRestaurant,
-    nonPreferRestaurant,
-  } = useOptionalSurveyStore();
+  // const {
+  //   transportation,
+  //   preferTravelPurpose,
+  //   nonPreferTravelPurpose,
+  //   preferAccommodation,
+  //   nonPreferAccommodation,
+  //   preferRestaurant,
+  //   nonPreferRestaurant,
+  // } = useOptionalSurveyStore();
 
   const handleSubmit = () => {
     if (
