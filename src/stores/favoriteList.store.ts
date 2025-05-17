@@ -13,7 +13,7 @@ interface FavoriteListState {
   resetFavoriteList: () => void;
 }
 
-export const usefavoriteListStore = create<FavoriteListState>()(
+export const useFavoriteListStore = create<FavoriteListState>()(
   persist(
     (set, get) => ({
       favoriteList: [],

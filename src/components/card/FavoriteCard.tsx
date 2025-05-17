@@ -1,4 +1,4 @@
-import { usefavoriteListStore } from "../../stores/favoriteList.store";
+import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
 interface FavoriteCardProps {
   cardImg: string;
@@ -6,7 +6,7 @@ interface FavoriteCardProps {
 }
 
 const FavoriteCard = ({ cardImg, cardName }: FavoriteCardProps) => {
-  const { deleteFavoriteList } = usefavoriteListStore();
+  const { deleteFavoriteList } = useFavoriteListStore();
 
   const handleDeleteFavoriteList = () => {
     deleteFavoriteList(cardName, cardImg);
