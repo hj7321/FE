@@ -6,7 +6,7 @@ const TransportationInfo = ({ period }: TransportationInfoProps) => {
   return (
     <div className="flex gap-[3px]">
       <img src="" alt="icon" />
-      <p>10분</p>
+      <p>10분{period}</p>
     </div>
   );
 };
