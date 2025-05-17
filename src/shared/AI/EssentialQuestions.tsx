@@ -4,8 +4,8 @@ import { useEssentialSurveyStore } from "../../stores/essentialSurvey.store";
 
 const EssentialQuestions = () => {
   const [numOfPeople, setNumOfPeople] = useState<string>("");
-  const startDateRef = useRef<HTMLInputElement>(null);
-  const endDateRef = useRef<HTMLInputElement>(null);
+  const startDateRef = useRef<HTMLInputElement | null>(null);
+  const endDateRef = useRef<HTMLInputElement | null>(null);
   const [travelPeriod, setTravelPeriod] = useState({
     startDate: "",
     endDate: "",
