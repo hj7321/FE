@@ -4,9 +4,20 @@ interface SearchBarProps {
   placeholder: string;
   main?: boolean;
   placeExploration?: boolean;
+  inputValue: string | null;
+  setInputValue: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const SearchBar = ({ placeholder, main, placeExploration }: SearchBarProps) => {
+const SearchBar = ({
+  placeholder,
+  main,
+  placeExploration,
+  inputValue,
+  setInputValue,
+}: SearchBarProps) => {
+  const handleChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
   return (
     <div
       className={clsx(
@@ -18,6 +29,8 @@ const SearchBar = ({ placeholder, main, placeExploration }: SearchBarProps) => {
       <input
         type="text"
         placeholder={`${placeholder} 검색하세요.`}
+        value={inputValue ?? ""}
+        onChange={handleChangeInputValue}
         className="outline-none w-[370px] text-black placeholder:text-[#b8b8b8] placeholder:text-[14px]"
       />
       <img src="/images/search.svg" alt="search" className="text-[10px]" />
