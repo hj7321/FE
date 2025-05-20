@@ -20,8 +20,8 @@ const ScheduleCard = ({
       className={clsx(
         "rounded-[6px] border py-[5px] px-[8px] h-fit",
         isNeededDeleteButton
-          ? "border-[#FF7FF5] bg-[#ffe4fe] w-[210px]"
-          : "border-[#7FFFF2] bg-[#e5fffc] w-fit max-w-[210px]",
+          ? "border-[#FF7FF5] bg-[#ffe4fe] w-[228px]"
+          : "border-[#7FFFF2] bg-[#e5fffc] w-fit max-w-[2280px]",
         isFirstSchedule && "mt-[5px]"
       )}
     >
