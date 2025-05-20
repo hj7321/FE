@@ -9,7 +9,7 @@ import ModalBackground from "../components/modal/ModalBackground";
 
 const Layout = () => {
   const { pathname }: { pathname: string } = useLocation();
-  const authPath = ["/login", "/sign-up"];
+  const authPath = ["/login", "/sign-up", "/travel-plan"];
   const hideLayout = authPath.some((path) => pathname.includes(path));
 
   return (
