@@ -3,12 +3,13 @@ import FavoritePlaceListButton from "../../components/button/FavoritePlaceListBu
 import PlaceCard from "../../components/card/PlaceCard";
 import SearchBar from "../../components/SearchBar";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Slider from "../../components/slider/Slider";
 
 const PlaceExplorationPage = () => {
   const { place } = useParams();
   const country = place?.split(" ")[0];
+  const [inputValue, setInputValue] = useState<string | null>(null);
   const { resetFavoriteList } = useFavoriteListStore();
   const currentPathRef = useRef(location.pathname);
 
@@ -37,7 +38,12 @@ const PlaceExplorationPage = () => {
       <section className="flex flex-col gap-[25px]">
         <div className="flex flex-col gap-[8px] items-center">
           <p className="font-bold text-[25px] text-center">장소 찾기</p>
-          <SearchBar placeholder={`${country} 내 장소를`} placeExploration />
+          <SearchBar
+            placeholder={`${country} 내 장소를`}
+            placeExploration
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+          />
         </div>
         <div className="py-[20px] flex flex-wrap gap-x-[20px] gap-y-[30px]">
           <PlaceCard cardImg="/images/cities/서울.jpg" cardName="경복궁" />
