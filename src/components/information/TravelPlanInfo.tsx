@@ -13,7 +13,7 @@ const TravelPlanInfo = ({ dayNum, date }: TravelPlanInfoProps) => {
       <div className="flex gap-[7px]">
         <div
           style={{ backgroundColor: `var(--color-day${dayNum})` }}
-          className="rounded-[4px] text-white text-[14px] py-[2px] px-[8px]"
+          className="rounded-[4px] text-white text-[14px] py-[2px] px-[8px] w-fit h-fit"
         >
           DAY {dayNum}
         </div>
