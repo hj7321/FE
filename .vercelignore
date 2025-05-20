@@ -1,0 +1,10 @@
+.vscode
+*.log
+*.tsbuildinfo
+dist/
+.env
+.env.*
+coverage/
+__tests__/
+__mocks__/
+README.md
