@@ -1,4 +1,5 @@
 import axios from "axios";
+import { PageData, WikipediaApiResponse } from "../types/pageData.type";
 
 const WIKIPEDIA_URL = "https://ko.wikipedia.org";
 
@@ -6,15 +7,28 @@ export const getPlaceInformation = async (placeName: string) => {
   const url = `${WIKIPEDIA_URL}/w/api.php`;
   const params = {
     action: "query",
-    // page: placeName,
+    prop: "extracts",
     format: "json",
-    prop: "text",
-    origin: "*", // CORS 문제 방지
+    origin: "*", // CORS 우회
+    exintro: "true", // 첫 섹션만 가져오기
+    titles: placeName,
   };
+
   try {
     const response = await axios.get(url, { params });
-    const html = response.data.query.text["*"]; // HTML 전체 내용
-    return html;
+    const wikipediaData: WikipediaApiResponse = response.data;
+    const data: PageData = Object.values(wikipediaData.query.pages)[0];
+    const textData = data.extract;
+    if (!textData) {
+      console.warn(
+        `[getPlaceInformation] ${placeName} 문서는 있지만 본문 없음`
+      );
+      return "설명 없음";
+    }
+
+    const result = `<div class="flex flex-col gap-y-[10px] leading-[1.6]">${textData}</div>`;
+
+    return result;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
