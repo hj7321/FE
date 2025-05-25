@@ -8,29 +8,31 @@ const MainPage = () => {
   const [clickedCountry, setClickedCountry] = useState<string>("전체");
   const [inputValue, setInputValue] = useState<string | null>(null);
   const [searchResult, setSearchResult] = useState<string[]>([]);
-
-  console.log(inputValue);
-  console.log(searchResult);
+  const [isComposing, setIsComposing] = useState<boolean>(false);
 
   useEffect(() => {
-    if (inputValue === null) {
+    const trimmedInput = inputValue?.trim();
+    if (!trimmedInput) {
       setSearchResult([]);
       return;
     }
-    Object.keys(COUNTRY_CITY).forEach((country) => {
-      if (country.includes(inputValue)) {
-        setClickedCountry("전체");
-        setSearchResult((prev) => [...prev, ...COUNTRY_CITY[country]]);
-      }
-    });
-    Object.values(COUNTRY_CITY).forEach((cities) => {
+
+    const matched: string[] = [];
+
+    Object.entries(COUNTRY_CITY).forEach(([country, cities]) => {
       cities.forEach((city) => {
-        if (city.includes(inputValue)) {
-          setClickedCountry("전체");
-          setSearchResult((prev) => [...prev, city]);
-        }
+        const fullName = `${country} ${city}`;
+        if (fullName.includes(trimmedInput)) matched.push(fullName);
       });
     });
+
+    setClickedCountry("전체");
+
+    // 조합 중일 때 결과가 없으면, 이전 결과 유지 (검색결과 업데이트 안 함)
+    if (isComposing && matched.length === 0) return;
+
+    // 조합 중이 아니거나, 결과가 있을 경우 갱신
+    setSearchResult(matched);
   }, [inputValue]);
 
   return (
@@ -48,6 +50,7 @@ const MainPage = () => {
             main
             inputValue={inputValue}
             setInputValue={setInputValue}
+            setIsComposing={setIsComposing}
           />
         </div>
       </article>
@@ -72,17 +75,18 @@ const MainPage = () => {
           ))}
         </div>
         <div className="py-[20px] flex flex-wrap gap-x-[35px] gap-y-[30px]">
-          {inputValue !== null &&
-            searchResult.length > 0 &&
-            searchResult.map((result) => (
-              <CityCard
-                key={result}
-                cardImg={`/images/cities/${result}.jpg`}
-                cardName={result}
-              />
-            ))}
-          {clickedCountry === "전체" && inputValue === null
-            ? Object.entries(COUNTRY_CITY).map(([country, cities]) =>
+          {inputValue?.trim()
+            ? searchResult.length > 0 || isComposing
+              ? searchResult.map((result) => (
+                  <CityCard
+                    key={result}
+                    cardImg={`/images/cities/${result.split(" ")[1]}.jpg`}
+                    cardName={result}
+                  />
+                ))
+              : null // 완성된 입력이고 결과 없음 → 아무것도 안 보임
+            : clickedCountry === "전체"
+            ? Object.entries(COUNTRY_CITY).flatMap(([country, cities]) =>
                 cities.map((city) => (
                   <CityCard
                     key={city}
