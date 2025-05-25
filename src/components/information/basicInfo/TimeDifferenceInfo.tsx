@@ -11,13 +11,13 @@ const TimeDifferenceInfo = ({ cardName }: TimeDifferenceInfoProps) => {
 
   return (
     <div className="flex gap-[15px] items-center">
-      <div className="flex w-[53px] justify-between items-center">
+      <div className="flex w-[47px] justify-between items-center">
         <img
           src="/images/time-difference.svg"
           alt="time-difference"
-          className="w-[20px] h-[20px] text-[10px]"
+          className="w-[14px] h-[15px] text-[10px]"
         />
-        <p className="text-[#8A8A8A] text-[15px]">시차</p>
+        <p className="text-[#aaaaaa] text-[15px]">시차</p>
       </div>
       <p className="text-[15px]">{getCityInfo(city, information, "시차")}</p>
     </div>

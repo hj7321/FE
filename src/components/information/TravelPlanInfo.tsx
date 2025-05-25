@@ -9,7 +9,7 @@ interface TravelPlanInfoProps {
 
 const TravelPlanInfo = ({ dayNum, date }: TravelPlanInfoProps) => {
   return (
-    <div className="flex flex-col gap-[10px] w-[220px]">
+    <div className="flex flex-col gap-[10px] w-[260px]">
       <div className="flex gap-[7px]">
         <div
           style={{ backgroundColor: `var(--color-day${dayNum})` }}

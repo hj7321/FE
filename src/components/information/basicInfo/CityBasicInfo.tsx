@@ -12,7 +12,7 @@ const CityBasicInfo = ({ cardName }: CityBasicInfoProps) => {
   const country = cardName.split(" ")[0];
 
   return (
-    <div className="flex flex-col gap-[8px]">
+    <div className="flex flex-col gap-[8px] text-[#363636]">
       <FlightInfo cardName={cardName} />
       <TimeDifferenceInfo cardName={cardName} />
       <VisaInfo cardName={cardName} />

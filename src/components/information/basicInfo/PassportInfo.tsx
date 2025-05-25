@@ -11,13 +11,13 @@ const PassportInfo = ({ cardName }: PassportInfoProps) => {
 
   return (
     <div className="flex gap-[15px] items-center">
-      <div className="flex w-[113px] justify-between items-center">
+      <div className="flex w-[107px] justify-between items-center">
         <img
           src="/images/passport-expiration.svg"
           alt="passport-expiration"
-          className="w-[20px] h-[20px] text-[10px] ml-[2.2px]"
+          className="w-[13px] h-[15px] text-[10px] ml-[2px]"
         />
-        <p className="text-[#8A8A8A] text-[15px]">여권 만료 조건</p>
+        <p className="text-[#aaaaaa] text-[15px]">여권 만료 조건</p>
       </div>
       <p className="text-[15px]">
         {getCityInfo(city, information, "여권만료조건")}

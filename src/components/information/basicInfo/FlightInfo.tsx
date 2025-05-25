@@ -11,13 +11,13 @@ const FlightInfo = ({ cardName }: FlightInfoProps) => {
 
   return (
     <div className="flex gap-[15px] items-center">
-      <div className="flex w-[53px] justify-between items-center">
+      <div className="flex w-[47px] justify-between items-center">
         <img
           src="/images/flight.svg"
           alt="flight"
-          className="w-[20px] h-[20px] text-[10px]"
+          className="w-[15px] h-[14px] text-[10px]"
         />
-        <p className="text-[#8A8A8A] text-[15px]">항공</p>
+        <p className="text-[#aaaaaa] text-[15px]">항공</p>
       </div>
       <p className="text-[15px]">{getCityInfo(city, information, "항공")}</p>
     </div>
