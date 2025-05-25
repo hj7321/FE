@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useModalStore } from "../../stores/modal.store";
 import CityModal from "../modal/CityModal";
 
@@ -6,7 +7,7 @@ interface CityCardProps {
   cardName: string;
 }
 
-const CityCard = ({ cardImg, cardName }: CityCardProps) => {
+const CityCard = memo(({ cardImg, cardName }: CityCardProps) => {
   const { openModal } = useModalStore();
 
   const handleOpenModal = () => {
@@ -21,12 +22,13 @@ const CityCard = ({ cardImg, cardName }: CityCardProps) => {
       <img
         src={cardImg}
         alt={cardName}
+        loading="lazy"
         className="rounded-[4px] h-[200px] object-cover text-[12px]"
       />
 
       <p>{cardName}</p>
     </div>
   );
-};
+});
 
 export default CityCard;
