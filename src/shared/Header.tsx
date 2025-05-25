@@ -12,7 +12,7 @@ const Header = () => {
     <header className="px-[100px] py-[10px] flex items-center justify-between">
       <Link
         to="/"
-        className="flex gap-[10px] transition-transform items-center"
+        className="flex gap-[10px] items-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -21,19 +21,19 @@ const Header = () => {
           alt="logo"
           className={clsx(
             "[filter:drop-shadow(5px_5px_2px_rgba(0,0,0,0.25))] h-[53px] aspect-[4/5]",
-            isHovered && "![filter:drop-shadow(5px_5px_2px_rgba(0,0,0,0.4))]"
+            isHovered && "![filter:drop-shadow(5px_5px_2px_rgba(0,0,0,0.5))]"
           )}
         />
         <p
           className={clsx(
             "font-bold text-[35px] [text-shadow:3px_3px_5px_rgba(0,0,0,0.25)]",
-            isHovered && "![text-shadow:3px_3px_5px_rgba(0,0,0,0.4)]"
+            isHovered && "![text-shadow:3px_3px_5px_rgba(0,0,0,0.5)]"
           )}
         >
           Tranner
         </p>
       </Link>
-      <div className="flex gap-[45px]">
+      <div className="flex gap-[45px] text-[14px]">
         {isLogin ? (
           <>
             <Link to="/my">내 정보</Link>

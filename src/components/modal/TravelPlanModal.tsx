@@ -42,11 +42,11 @@ const TravelPlanModal = ({
           className="rounded-[4px] w-[280px] h-[170px] object-cover text-[12px]"
         />
         <div className="flex-grow">
-          <div className="flex justify-between">
+          <div className="flex gap-[20px] items-center">
             <p className="text-[25px] font-bold">{travelTitle}</p>
             <div
               className={clsx(
-                "mt-[2px] text-white text-[13px] rounded-[4px] px-[7px] py-[2px] h-fit w-fit mr-[30px]",
+                "mt-[2px] text-white text-[13px] rounded-[4px] px-[7px] py-[2px] h-fit w-fit mb-[3px]",
                 isEnded ? "bg-[#72D862]" : "bg-[#F68363]"
               )}
             >
