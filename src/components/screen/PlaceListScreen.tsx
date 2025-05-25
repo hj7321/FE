@@ -54,17 +54,17 @@ const PlaceListScreen = () => {
           <TravelPlaceCard
             cardName="트레비 분수"
             cardImg="./images/트레비 분수.jpg"
-            isFavorite={true}
+            isFavorite={false}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
             cardImg="./images/트레비 분수.jpg"
-            isFavorite={true}
+            isFavorite={false}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
             cardImg="./images/트레비 분수.jpg"
-            isFavorite={true}
+            isFavorite={false}
           />
         </div>
       </div>
