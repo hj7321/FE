@@ -10,9 +10,13 @@ const LoginForm = () => {
         로그인
       </button>
       <div className="mt-[-5px] flex gap-[10px] text-[13px] justify-center">
-        <Link to="/">아이디 찾기</Link>
+        <Link to="/" className="hover:font-bold">
+          아이디 찾기
+        </Link>
         <p>│</p>
-        <Link to="/">비밀번호 재설정하기</Link>
+        <Link to="/" className="hover:font-bold">
+          비밀번호 재설정하기
+        </Link>
       </div>
       <div className="mt-[5px] flex flex-col gap-[10px] justify-center items-center">
         <div className="flex gap-[7px] items-center justify-center">
@@ -38,10 +42,12 @@ const LoginForm = () => {
         </button>
       </div>
       <div className="flex justify-center items-center gap-[10px]">
-        <p className="text-[12px] text-[#919191]">아직 회원이 아니신가요?</p>
+        <p className="text-[11.5px] mt-[1px] text-[#919191]">
+          아직 회원이 아니신가요?
+        </p>
         <Link
           to="/sign-up"
-          className="text-[14px] font-bold hover:cursor-pointer"
+          className="text-[14px] hover:font-bold hover:cursor-pointer"
         >
           회원가입하기 {">"}
         </Link>
