@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useModalStore } from "../../stores/modal.store";
 import PlaceModal from "../modal/PlaceModal";
 
@@ -6,7 +7,7 @@ interface PlaceCardProps {
   cardName: string;
 }
 
-const PlaceCard = ({ cardImg, cardName }: PlaceCardProps) => {
+const PlaceCard = memo(({ cardImg, cardName }: PlaceCardProps) => {
   const { openModal } = useModalStore();
 
   const handleOpenModal = () => {
@@ -23,12 +24,13 @@ const PlaceCard = ({ cardImg, cardName }: PlaceCardProps) => {
       <img
         src={cardImg}
         alt={cardName}
+        loading="lazy"
         className="rounded-[4px] h-[155px] object-cover text-[12px]"
       />
 
       <p>{cardName}</p>
     </div>
   );
-};
+});
 
 export default PlaceCard;

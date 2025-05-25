@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
 interface FavoriteCardProps {
@@ -5,7 +6,7 @@ interface FavoriteCardProps {
   cardName: string;
 }
 
-const FavoriteCard = ({ cardImg, cardName }: FavoriteCardProps) => {
+const FavoriteCard = memo(({ cardImg, cardName }: FavoriteCardProps) => {
   const { deleteFavoriteList } = useFavoriteListStore();
 
   const handleDeleteFavoriteList = () => {
@@ -35,11 +36,12 @@ const FavoriteCard = ({ cardImg, cardName }: FavoriteCardProps) => {
       <img
         src={cardImg}
         alt={cardName}
+        loading="lazy"
         className="text-[12px] rounded-[4px] h-[107px] w-[137px] object-cover"
       />
       <p className="text-[14px]">{cardName}</p>
     </div>
   );
-};
+});
 
 export default FavoriteCard;
