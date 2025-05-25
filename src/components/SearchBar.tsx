@@ -6,6 +6,7 @@ interface SearchBarProps {
   placeExploration?: boolean;
   inputValue: string | null;
   setInputValue: React.Dispatch<React.SetStateAction<string | null>>;
+  setIsComposing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchBar = ({
@@ -14,10 +15,12 @@ const SearchBar = ({
   placeExploration,
   inputValue,
   setInputValue,
+  setIsComposing,
 }: SearchBarProps) => {
   const handleChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
+
   return (
     <div
       className={clsx(
@@ -31,6 +34,11 @@ const SearchBar = ({
         placeholder={`${placeholder} 검색하세요.`}
         value={inputValue ?? ""}
         onChange={handleChangeInputValue}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={(e) => {
+          setInputValue(e.currentTarget.value);
+          setIsComposing(false);
+        }}
         className="outline-none w-[370px] text-black placeholder:text-[#b8b8b8] placeholder:text-[14px]"
       />
       <img src="/images/search.svg" alt="search" className="text-[10px]" />
