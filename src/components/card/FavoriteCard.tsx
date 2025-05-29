@@ -7,7 +7,9 @@ interface FavoriteCardProps {
 }
 
 const FavoriteCard = memo(({ cardImg, cardName }: FavoriteCardProps) => {
-  const { deleteFavoriteList } = useFavoriteListStore();
+  const deleteFavoriteList = useFavoriteListStore(
+    (state) => state.deleteFavoriteList
+  );
 
   const handleDeleteFavoriteList = () => {
     deleteFavoriteList(cardName, cardImg);

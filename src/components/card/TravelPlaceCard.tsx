@@ -10,7 +10,7 @@ interface TravelPlaceCardProps {
 
 const TravelPlaceCard = memo(
   ({ cardName, cardImg, isFavorite }: TravelPlaceCardProps) => {
-    const { openModal } = useModalStore();
+    const openModal = useModalStore((state) => state.openModal);
 
     const handleOpenModal = () => {
       openModal(<PlaceModal cardName={cardName} cardImg={cardImg} />);

@@ -10,7 +10,7 @@ interface CityModalProps {
 }
 
 const CityModal = ({ cardName, cardImg }: CityModalProps) => {
-  const { closeModal } = useModalStore();
+  const closeModal = useModalStore((state) => state.closeModal);
   const navigate = useNavigate();
 
   const city = cardName.split(" ")[1];

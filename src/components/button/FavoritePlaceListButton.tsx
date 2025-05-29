@@ -5,7 +5,7 @@ import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
 const FavoritePlaceListButton = () => {
   const [showBox, setShowBox] = useState<boolean>(false);
-  const { favoriteList } = useFavoriteListStore();
+  const favoriteList = useFavoriteListStore((state) => state.favoriteList);
 
   return (
     <div>

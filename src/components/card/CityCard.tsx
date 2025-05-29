@@ -8,7 +8,7 @@ interface CityCardProps {
 }
 
 const CityCard = memo(({ cardImg, cardName }: CityCardProps) => {
-  const { openModal } = useModalStore();
+  const openModal = useModalStore((state) => state.openModal);
 
   const handleOpenModal = () => {
     openModal(<CityModal cardName={cardName} cardImg={cardImg} />);

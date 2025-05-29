@@ -23,12 +23,12 @@ const TravelPlanCard = memo(
     travelPlace,
     isEnded,
   }: TravelPlanCardProps) => {
-    const { openModal } = useModalStore();
+    const openModal = useModalStore((state) => state.openModal);
 
     const handleOpenModal = () => {
       openModal(
         <TravelPlanModal
-          cardImg="/images/cities/바르셀로나.jpg"
+          cardImg="/images/cities/바르셀로나.webp"
           travelTitle="황금연휴에 가는 해외여행😊"
           travelStartDate="2025.05.01"
           travelEndDate="2025.05.07"

@@ -1,7 +1,10 @@
 import { useModalStore } from "../../stores/modal.store";
 
 const ModalBackground = () => {
-  const { isModalOpen, modalContent, closeModal } = useModalStore();
+  const isModalOpen = useModalStore((state) => state.isModalOpen);
+  const modalContent = useModalStore((state) => state.modalContent);
+  const closeModal = useModalStore((state) => state.closeModal);
+  console.log("🌟ModalBackground 렌더링됨!!🌟");
 
   if (!isModalOpen) return null;
 

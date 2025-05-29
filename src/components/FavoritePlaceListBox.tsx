@@ -3,7 +3,7 @@ import FavoriteCard from "./card/FavoriteCard";
 import { useFavoriteListStore } from "../stores/favoriteList.store";
 
 const FavoritePlaceListBox = () => {
-  const { favoriteList } = useFavoriteListStore();
+  const favoriteList = useFavoriteListStore((state) => state.favoriteList);
   const navigate = useNavigate();
 
   const handlePlanTravel = () => {

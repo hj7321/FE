@@ -10,7 +10,7 @@ interface RecentPlaceCardProps {
 
 const RecentPlaceCard = memo(
   ({ cardImg, countryName, placeName }: RecentPlaceCardProps) => {
-    const { openModal } = useModalStore();
+    const openModal = useModalStore((state) => state.openModal);
 
     const handleOpenModal = () => {
       openModal(<PlaceModal cardName={placeName} cardImg={cardImg} />);

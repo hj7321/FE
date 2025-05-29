@@ -10,8 +10,10 @@ interface PlaceModalProps {
 }
 
 const PlaceModal = ({ cardName, cardImg, isNeededButton }: PlaceModalProps) => {
-  const { closeModal } = useModalStore();
-  const { addFavoriteList } = useFavoriteListStore();
+  const closeModal = useModalStore((state) => state.closeModal);
+  const addFavoriteList = useFavoriteListStore(
+    (state) => state.addFavoriteList
+  );
 
   const handleAddFavoriteList = () => {
     addFavoriteList(cardName, cardImg);

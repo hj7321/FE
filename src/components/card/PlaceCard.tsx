@@ -8,7 +8,7 @@ interface PlaceCardProps {
 }
 
 const PlaceCard = memo(({ cardImg, cardName }: PlaceCardProps) => {
-  const { openModal } = useModalStore();
+  const openModal = useModalStore((state) => state.openModal);
 
   const handleOpenModal = () => {
     openModal(
