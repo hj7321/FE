@@ -80,7 +80,7 @@ const MainPage = () => {
               ? searchResult.map((result) => (
                   <CityCard
                     key={result}
-                    cardImg={`/images/cities/${result.split(" ")[1]}.jpg`}
+                    cardImg={`/images/cities/${result.split(" ")[1]}.webp`}
                     cardName={result}
                   />
                 ))
@@ -90,7 +90,7 @@ const MainPage = () => {
                 cities.map((city) => (
                   <CityCard
                     key={city}
-                    cardImg={`/images/cities/${city}.jpg`}
+                    cardImg={`/images/cities/${city}.webp`}
                     cardName={`${country} ${city}`}
                   />
                 ))
@@ -98,7 +98,7 @@ const MainPage = () => {
             : COUNTRY_CITY[clickedCountry].map((city) => (
                 <CityCard
                   key={city}
-                  cardImg={`/images/cities/${city}.jpg`}
+                  cardImg={`/images/cities/${city}.webp`}
                   cardName={`${clickedCountry} ${city}`}
                 />
               ))}

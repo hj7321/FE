@@ -28,42 +28,42 @@ const PlaceListScreen = () => {
         <div className="flex flex-wrap w-[370px] h-[596px] pb-[15px] pl-[20px] pr-[15px] justify-between gap-y-[15px] bg-white overflow-y-auto scrollbar-custom">
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={true}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={true}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={true}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={true}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={true}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={false}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={false}
           />
           <TravelPlaceCard
             cardName="트레비 분수"
-            cardImg="./images/트레비 분수.jpg"
+            cardImg="./images/트레비 분수.webp"
             isFavorite={false}
           />
         </div>

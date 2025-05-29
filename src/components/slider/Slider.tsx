@@ -48,7 +48,7 @@ const Slider = () => {
         {Array.from({ length: 20 }).map((_, index) => (
           <SwiperSlide key={index}>
             <PlaceCard
-              cardImg="/images/cities/서울.jpg"
+              cardImg="/images/cities/서울.webp"
               cardName={`경복궁${index + 1}`}
             />
           </SwiperSlide>
