@@ -6,13 +6,13 @@ interface TransportationButtonProps {
 }
 
 const TransportationButton = ({ buttonName }: TransportationButtonProps) => {
-  // const { transportation, setTransportation } = useOptionalSurveyStore();
   const transportation = useOptionalSurveyStore(
     (state) => state.transportation
   );
   const setTransportation = useOptionalSurveyStore(
     (state) => state.setTransportation
   );
+
   const isClicked = transportation.includes(buttonName);
 
   const handleClick = () => {
