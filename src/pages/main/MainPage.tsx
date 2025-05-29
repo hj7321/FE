@@ -5,10 +5,20 @@ import CityCard from "../../components/card/CityCard";
 import { COUNTRY_CITY } from "../../constants/countries";
 
 const MainPage = () => {
+  const [result, setResult] = useState<string>("");
   const [clickedCountry, setClickedCountry] = useState<string>("전체");
   const [inputValue, setInputValue] = useState<string | null>(null);
   const [searchResult, setSearchResult] = useState<string[]>([]);
   const [isComposing, setIsComposing] = useState<boolean>(false);
+
+  useEffect(() => {
+    const countries = Object.keys(COUNTRY_CITY);
+    const randomCountry =
+      countries[Math.floor(Math.random() * countries.length)];
+    const randomIndex = Math.random() < 0.5 ? 1 : 2;
+
+    setResult(`${randomCountry}-${randomIndex}`);
+  }, []);
 
   useEffect(() => {
     const trimmedInput = inputValue?.trim();
@@ -38,7 +48,7 @@ const MainPage = () => {
   return (
     <>
       <article
-        style={{ backgroundImage: "url('/images/countries/Italy.jpg')" }}
+        style={{ backgroundImage: `url(/images/countries/${result}.webp)` }}
         className="h-[380px] w-full bg-cover bg-[50%_40%] flex justify-center items-center"
       >
         <div className="flex flex-col gap-[8px]">
