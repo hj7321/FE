@@ -1,8 +1,8 @@
 import { Link } from "react-router";
 import LoginForm from "./LoginForm";
-import SignupForm from "./SignupForm";
 import { useState } from "react";
 import clsx from "clsx";
+import SignupForm from "./SignupForm";
 
 interface AuthFormProps {
   pageName: string;
@@ -37,7 +37,7 @@ const AuthForm = ({ pageName }: AuthFormProps) => {
             Tranner
           </p>
         </Link>
-        {pageName === "signup" && <SignupForm isFullEmailInput={false} />}
+        {pageName === "signup" && <SignupForm />}
         {pageName === "login" && <LoginForm />}
       </div>
     </section>
