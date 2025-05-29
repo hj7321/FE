@@ -2,6 +2,7 @@ import { useState } from "react";
 import SurveyHeader from "./SurveyHeader";
 import EssentialQuestions from "./EssentialQuestions";
 import OptionalQuestions from "./OptionalQuestions";
+// import Loading from "./Loading";
 
 const AISurvey = () => {
   const [isClickedEssential, setIsClickedEssential] = useState<boolean>(true);
@@ -16,6 +17,7 @@ const AISurvey = () => {
         <section className="mt-[20px]">
           {isClickedEssential ? <EssentialQuestions /> : <OptionalQuestions />}
         </section>
+        {/* <Loading /> */}
       </div>
     </div>
   );
