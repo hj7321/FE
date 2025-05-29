@@ -8,6 +8,7 @@ import TravelPlanPage from "../pages/travel_plan/TravelPlanPage";
 import MyPage from "../pages/my/MyPage";
 import RecentlyViewedPlacesPage from "../pages/my/RecentlyViewedPlacesPage";
 import TravelHistoryPage from "../pages/my/TravelHistoryPage";
+import TokenCallback from "../components/auth/TokenCallback";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/sign-up",
         element: <SignupPage />,
+      },
+      {
+        path: "/token-callback",
+        element: <TokenCallback />,
       },
       // 주요 서비스 페이지
       {
