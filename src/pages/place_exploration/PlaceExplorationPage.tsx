@@ -13,7 +13,9 @@ const PlaceExplorationPage = () => {
   const [searchResult, setSearchResult] = useState<string[]>([]);
   const [isComposing, setIsComposing] = useState<boolean>(false);
 
-  const { resetFavoriteList } = useFavoriteListStore();
+  const resetFavoriteList = useFavoriteListStore(
+    (state) => state.resetFavoriteList
+  );
   const currentPathRef = useRef(location.pathname);
 
   console.log(searchResult);
@@ -74,9 +76,9 @@ const PlaceExplorationPage = () => {
           />
         </div>
         <div className="py-[20px] flex flex-wrap gap-x-[20px] gap-y-[30px]">
-          <PlaceCard cardImg="/images/cities/서울.jpg" cardName="경복궁" />
-          <PlaceCard cardImg="/images/cities/서울.jpg" cardName="경복궁" />
-          <PlaceCard cardImg="/images/cities/서울.jpg" cardName="경복궁" />
+          <PlaceCard cardImg="/images/cities/서울.webp" cardName="경복궁" />
+          <PlaceCard cardImg="/images/cities/서울.webp" cardName="경복궁" />
+          <PlaceCard cardImg="/images/cities/서울.webp" cardName="경복궁" />
           <PlaceCard cardImg="/images/default.png" cardName="텍스트" />
         </div>
       </section>
