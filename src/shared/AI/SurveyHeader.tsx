@@ -10,6 +10,7 @@ const SurveyHeader = ({
   isClickedEssential,
   setIsClickedEssential,
 }: SurveyHeaderProps) => {
+  // [TODO] 구조 분해 할당 방식 vs. 선택적 구독 차이 비교하기
   const { people, startDate, endDate, budget } = useEssentialSurveyStore();
   // const {
   //   transportation,
