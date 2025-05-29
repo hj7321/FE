@@ -9,7 +9,7 @@ interface CityInfoProps {
 
 const CityInfo = ({ cardName }: CityInfoProps) => {
   const city = cardName.split(" ")[1];
-  const { data, error, isError } = useQuery<string, Error>({
+  const { data } = useQuery<string, Error>({
     queryKey: ["cityInfo", city],
     queryFn: () => getPlaceInformation(WIKIPEDIA_SEARCH_WORD[city]),
     staleTime: 60 * 60 * 1000, // 1시간 동안 fresh 상태로 유지
