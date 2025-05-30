@@ -1,11 +1,14 @@
-import axios, { AxiosResponse } from "axios";
-import { CheckCodeType, CheckEmailType, SignupType } from "../types/auth.type";
+import axios from "axios";
+import {
+  CheckCodeType,
+  CheckEmailType,
+  CheckIdType,
+  SignupType,
+} from "../types/auth.type";
 import { api } from "./api";
 
 // 이메일 인증코드 전송
-export const checkEmail = async ({
-  email,
-}: CheckEmailType): Promise<AxiosResponse> => {
+export const checkEmail = async ({ email }: CheckEmailType) => {
   const path = "/account/email/verification";
 
   try {
@@ -15,18 +18,15 @@ export const checkEmail = async ({
     return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      // if (error.response?.status === 401) {
-      //     console.error("[signup] 이메일 형식이 올바르지 않음");
-      //     throw new Error("이메일 형식이 올바르지 않습니다.");
-      //   } else if (error.response?.status === 409) {
-      //     console.error("[signup] 이미 존재하는 이메일");
-      //     throw new Error("이미 존재하는 이메일입니다.");
-      //   } else if (error.response?.status === 500) {
-      //     console.error("[signup] 서버 에러");
-      //     throw new Error("서버 에러입니다. 잠시 후에 다시 이용해주세요.");
-      //   } else {
-      console.error("[signup] Axios 에러: ", error.message);
-      // }
+      if (error.response?.data.code === "CLT001") {
+        console.error("[checkEmail] 이미 존재하는 이메일", error);
+        throw new Error("이미 존재하는 이메일입니다.");
+      } else if (error.response?.data.code === "SYS001") {
+        console.error("[checkEmail] 이메일 전송 실패", error);
+        throw new Error("이메일 전송에 실패했습니다.");
+      } else {
+        console.error("[checkEmail] Axios 에러: ", error);
+      }
     } else {
       console.error("[checkEmail] 일반 에러: ", error);
     }
@@ -43,15 +43,21 @@ export const checkCode = async ({ email, code }: CheckCodeType) => {
       email,
       verificationCode: code,
     });
-    const data = response.data;
-    return data;
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      // if (error.response?.status === 400) {
-      //   console.error("[checkCode] 인증번호가 올바르지 않음");
-      // } else {
-      console.error("[checkCode] Axios 에러: ", error.message);
-      // }
+      if (
+        error.response?.data.code === "CLT007" ||
+        error.response?.data.code === "CLT008"
+      ) {
+        console.error("[checkCode] 인증번호가 올바르지 않음", error);
+        throw new Error("인증번호가 올바르지 않습니다.");
+      } else if (error.response?.data.code === "CLT009") {
+        console.error("[checkCode] 인증번호 만료", error);
+        throw new Error("인증번호가 만료되었습니다.");
+      } else {
+        console.error("[checkCode] Axios 에러: ", error);
+      }
     } else {
       console.error("[checkCode] 일반 에러: ", error);
     }
@@ -59,8 +65,30 @@ export const checkCode = async ({ email, code }: CheckCodeType) => {
   }
 };
 
+// 아이디 중복체크
+export const checkId = async ({ id }: CheckIdType) => {
+  const path = "/account/idDuplicatedCheck";
+
+  try {
+    const response = await api.get(path, {
+      params: {
+        id,
+      },
+    });
+    const data = response.data;
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("[checkId] Axios 에러: ", error);
+    } else {
+      console.error("[checkId] 일반 에러: ", error);
+    }
+    throw error;
+  }
+};
+
 // 자체 회원가입
-export const signup = async ({ id, pw, email }: SignupType) => {
+export const selfSignup = async ({ id, pw, email }: SignupType) => {
   const path = "/account/signup";
 
   try {
@@ -69,14 +97,17 @@ export const signup = async ({ id, pw, email }: SignupType) => {
       password: pw,
       memberEmail: email,
     });
-    const data = response.data;
-    return data;
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 409) {
-        console.error("[signup] 이미 존재하는 이메일");
+      if (error.response?.data.code === "CLT001") {
+        console.error("[signup] 이미 존재하는 이메일", error);
+        throw new Error("이미 존재하는 이메일입니다.");
+      } else if (error.response?.data.code === "CLT005") {
+        console.error("[checkId] 이미 존재하는 아이디");
+        throw new Error("이미 존재하는 아이디입니다.");
       } else {
-        console.error("[signup] Axios 에러: ", error.message);
+        console.error("[signup] Axios 에러: ", error);
       }
     } else {
       console.error("[signup] 일반 에러: ", error);
