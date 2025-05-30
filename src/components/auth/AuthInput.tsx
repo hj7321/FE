@@ -1,24 +1,27 @@
-import clsx from "clsx";
 import { useState } from "react";
 
 interface AuthInputProps {
   label: string;
   name: string;
   type: string;
-  short?: boolean;
+  inputRef?: (el: HTMLInputElement | null) => void;
+  width?: number;
   inputValue: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const AuthInput = ({
   label,
   name,
   type,
-  short,
+  inputRef,
+  width,
   inputValue,
   onChange,
   onKeyDown,
+  disabled,
 }: AuthInputProps) => {
   const [inputType, setInputType] = useState<string>(type);
 
@@ -33,21 +36,23 @@ const AuthInput = ({
     <label>
       <p className="text-[12px] mb-[1px] text-[#333333]">{label}</p>
       <div
-        className={clsx(
-          "px-[15px] h-[45px] bg-white rounded-[4px] [box-shadow:2px_2px_5px_rgba(0,0,0,0.25)] flex items-center justify-between",
-          short ? "w-[132px]" : "w-[250px]"
-        )}
+        className="px-[15px] h-[45px] bg-white rounded-[4px] [box-shadow:2px_2px_5px_rgba(0,0,0,0.25)] flex items-center justify-between"
+        style={{
+          width: width ? `${width}px` : "250px",
+        }}
       >
         <input
           type={inputType}
           name={name}
-          className={clsx(
-            "outline-none text-[15px]",
-            short ? "w-[90px]" : "w-[190px]"
-          )}
+          ref={inputRef}
+          className="outline-none text-[15px]"
+          style={{
+            width: width ? `${width - 40}px` : "190px",
+          }}
           value={inputValue}
           onChange={onChange}
           onKeyDown={onKeyDown}
+          disabled={disabled}
           autoComplete="off"
         />
         {inputType === "password" && label.includes("비밀번호") && (
