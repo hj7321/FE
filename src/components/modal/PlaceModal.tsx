@@ -17,6 +17,7 @@ const PlaceModal = ({ cardName, cardImg, isNeededButton }: PlaceModalProps) => {
 
   const handleAddFavoriteList = () => {
     addFavoriteList(cardName, cardImg);
+    closeModal();
   };
 
   return (
