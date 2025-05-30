@@ -3,7 +3,7 @@ import { LoginType } from "../types/auth.type";
 import { api } from "./api";
 
 // 자체 로그인
-export const login = async ({ id, pw }: LoginType) => {
+export const selfLogin = async ({ id, pw }: LoginType) => {
   const path = "/account/login";
 
   try {
@@ -11,11 +11,15 @@ export const login = async ({ id, pw }: LoginType) => {
       memberId: id,
       password: pw,
     });
-    const data = response.data;
-    return data;
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("[login] Axios 에러: ", error.message);
+      if (error.response?.data.code === "CLT010") {
+        console.error("[login] 회원정보 불일치");
+        throw new Error("회원정보가 일치하지 않습니다.");
+      } else {
+        console.error("[login] Axios 에러: ", error);
+      }
     } else {
       console.error("[login] 일반 에러: ", error);
     }
