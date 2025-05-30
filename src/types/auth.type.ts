@@ -2,12 +2,15 @@ export type CheckEmailType = {
   email: string;
 };
 
+export type CheckIdType = {
+  id: string;
+};
+
 export type CheckCodeType = CheckEmailType & {
   code: number;
 };
 
-export type LoginType = {
-  id: string;
+export type LoginType = CheckIdType & {
   pw: string;
 };
 
