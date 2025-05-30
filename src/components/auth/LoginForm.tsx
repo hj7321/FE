@@ -1,15 +1,51 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AuthInput from "./AuthInput";
 import { useState } from "react";
+import { useAuthStore } from "../../stores/auth.store";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
+import { LoginType } from "../../types/auth.type";
+import { selfLogin } from "../../apis/login.api";
+import clsx from "clsx";
 
 const popupWidth = 550;
 const popupHeight = 650;
 const left = window.screenX + (window.outerWidth - popupWidth) / 2;
 
+const style_active = "bg-common hover:cursor-pointer hover:bg-selected";
+const style_inactive = "bg-[#C895E6] opacity-25";
+
 const LoginForm = () => {
   const [form, setForm] = useState({
     id: "",
     pw: "",
+  });
+  const [isSending, setIsSending] = useState<boolean>(false);
+
+  const login = useAuthStore((state) => state.login);
+
+  const navigate = useNavigate();
+
+  const { mutate: loginMutate } = useMutation<AxiosResponse, Error, LoginType>({
+    mutationKey: ["login", form.id],
+    mutationFn: selfLogin,
+    onMutate: () => {
+      setIsSending(true);
+    },
+    onSuccess: (response) => {
+      login();
+      // 액세스 토큰 저장
+      console.log("✅ 로그인 완료", response);
+      navigate("/");
+    },
+    onError: (err) => {
+      console.error("❌ 로그인 실패", err);
+      alert(err.message);
+    },
+    onSettled: () => {
+      setIsSending(false);
+    },
+    retry: 1,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,9 +53,15 @@ const LoginForm = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // 폼 제출 방지
+    if (form.id === "" || form.pw === "" || isSending) return;
+    loginMutate({ id: form.id, pw: form.pw });
+  };
+
   const handleKakaoLogin = () => {
     window.open(
-      "http://3.35.102.134:8080/oauth2/authorization/kakao",
+      "https://api.tranner.com/oauth2/authorization/kakao",
       "kakaoLogin",
       `width=${popupWidth},height=${popupHeight},left=${left},top=50,toolbar=no,noopener,noreferrer`
     );
@@ -27,14 +69,14 @@ const LoginForm = () => {
 
   const handleGoogleLogin = () => {
     window.open(
-      "http://3.35.102.134:8080/oauth2/authorization/google",
+      "https://api.tranner.com/oauth2/authorization/google",
       "googleLogin",
       `width=${popupWidth},height=${popupHeight},left=${left},top=50,toolbar=no,noopener,noreferrer`
     );
   };
 
   return (
-    <div className="flex flex-col gap-[15px]">
+    <form onSubmit={handleLogin} className="flex flex-col gap-[15px]">
       <AuthInput
         label="아이디"
         name="id"
@@ -46,10 +88,20 @@ const LoginForm = () => {
         label="비밀번호"
         name="pw"
         type="password"
-        inputValue={form.id}
+        inputValue={form.pw}
         onChange={handleChange}
       />
-      <button className="mt-[10px] w-[250px] h-[45px] text-[14px] text-white bg-common rounded-[4px] hover:cursor-pointer hover:bg-selected">
+      <button
+        type="submit"
+        className={clsx(
+          "mt-[10px] w-[250px] h-[45px] text-[14px] text-white rounded-[4px]",
+          form.id === "" || form.pw === ""
+            ? style_inactive
+            : isSending
+            ? style_inactive
+            : style_active
+        )}
+      >
         로그인
       </button>
       <div className="mt-[-5px] flex gap-[10px] text-[13px] justify-center">
@@ -101,7 +153,7 @@ const LoginForm = () => {
           회원가입하기 {">"}
         </Link>
       </div>
-    </div>
+    </form>
   );
 };
 
