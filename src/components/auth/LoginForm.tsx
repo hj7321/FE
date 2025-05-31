@@ -33,7 +33,7 @@ const LoginForm = () => {
       setIsSending(true);
     },
     onSuccess: (response) => {
-      login();
+      login(response.headers.authorization);
       // 액세스 토큰 저장
       console.log("✅ 로그인 완료", response);
       navigate("/");
@@ -63,7 +63,7 @@ const LoginForm = () => {
     window.open(
       "https://api.tranner.com/oauth2/authorization/kakao",
       "kakaoLogin",
-      `width=${popupWidth},height=${popupHeight},left=${left},top=50,toolbar=no,noopener,noreferrer`
+      `width=${popupWidth},height=${popupHeight},left=${left},top=50,toolbar=no`
     );
   };
 
@@ -71,7 +71,7 @@ const LoginForm = () => {
     window.open(
       "https://api.tranner.com/oauth2/authorization/google",
       "googleLogin",
-      `width=${popupWidth},height=${popupHeight},left=${left},top=50,toolbar=no,noopener,noreferrer`
+      `width=${popupWidth},height=${popupHeight},left=${left},top=50,toolbar=no`
     );
   };
 
