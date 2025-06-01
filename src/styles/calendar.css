@@ -1,51 +1,163 @@
+/* 전체 달력 컴포넌트 최상위 컨테이너 */
 .react-datepicker {
   border: none;
-  font-family: "Pretendard", sans-serif;
+  font-family: "SUIT-Regular";
   font-size: 14px;
-  padding: 10px 20px;
+  /* width: 100%; */
+  position: relative;
+  padding: 0 10px;
+  height: 400px;
   background-color: white;
+  /* border: 1px solid purple; */
 }
 
+/* 한 달 단위로 나뉜 박스 */
 .react-datepicker__month-container {
+  padding: 5px;
   margin: 0 20px;
-  width: 400px; /* 개별 달 너비 */
-  height: 340px;
-  border: 1px solid green;
+  width: 420px; /* 개별 달 너비 */
+  /* height: 340px; */
+  /* border: 1px solid green; */
+  border-radius: 4px;
 }
 
+/* 달력 상단(월/연도, 요일 있는 부분) */
 .react-datepicker__header {
   background-color: white;
   border-bottom: none;
+  /* border: 1px solid blue; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  /* padding: 2px; */
 }
 
+/* 현재 월/연도 텍스트 */
+.react-datepicker__current-month {
+  font-size: 20px;
+  /* border: 2px solid lightgreen; */
+}
+
+/* 요일(일~토)을 감싸는 영역 */
+.react-datepicker__day-names {
+  /* border: 2px solid brown; */
+  margin-top: 7px;
+  display: flex;
+  justify-content: center;
+  width: 395px;
+}
+
+/* 각각의 요일 텍스트 (일, 월, 화, ...) */
 .react-datepicker__day-name {
-  font-weight: 500;
   color: #444;
-  margin: 4px 0;
+  margin: 10px 15px;
+  /* border: 1px solid pink; */
+  font-size: 17px;
+  font-weight: 500;
 }
 
+/* 날짜들을 감싸는 그리드 영역 */
+.react-datepicker__month {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 260px; /* 줄 수를 강제로 맞추기 위한 최소 높이 */
+  /* border: 3px solid palevioletred; */
+  /* width: 395px; */
+  /* place-content: center; */
+}
+
+/* 한 주(7일)를 나타내는 행 */
+.react-datepicker__week {
+  display: flex;
+  justify-content: center;
+  height: 50px;
+  /* border: 2px solid lightseagreen; */
+  width: 395px;
+}
+
+/* 각 날짜 셀 (일반 날짜) */
 .react-datepicker__day {
   width: 36px;
   height: 36px;
-  margin: 4px;
+  margin: 7px 10px;
   line-height: 36px;
-  border-radius: 50%;
+  border-radius: 4px;
   text-align: center;
+  font-size: 16px;
   transition: background-color 0.2s;
+  /* border: 1px solid red; */
 }
 
 .react-datepicker__day:hover {
   background-color: #f3e8ff; /* 연보라 */
+  border-radius: 4px;
 }
 
+/* 오늘 날짜 */
+.react-datepicker__day--today {
+  background-color: transparent !important;
+}
+
+/* 선택된 날짜, endDate 미선택 상태에서 hover 중인 범위 날짜, start와 end 사이에 포함된 날짜  */
 .react-datepicker__day--selected,
 .react-datepicker__day--in-selecting-range,
 .react-datepicker__day--in-range {
   background-color: #7c3aed !important; /* 진보라 */
   color: white !important;
+  border-radius: 4px;
 }
 
+/* 키보드로 포커싱된 날짜 */
 .react-datepicker__day--keyboard-selected {
-  background-color: #e9d5ff;
+  background-color: white;
   color: black;
 }
+
+.react-datepicker__day--outside-month {
+  background-color: transparent !important;
+  color: #ccc; /* 흐리게 보이게 */
+}
+
+/* 	월 전환 화살표 버튼 공통 */
+.react-datepicker__navigation {
+  /* display: none; */
+  /* border: 1px solid black; */
+  position: absolute;
+  top: 13px;
+}
+
+/* 일요일: 기본 빨간색 */
+.custom-sunday {
+  color: #ef4444; /* Tailwind 기준 text-red-500 */
+}
+
+/* 선택된 일요일은 흰색 */
+.react-datepicker__day--selected.custom-sunday {
+  color: white !important;
+}
+
+/* 범위 밖 일요일 (회색 처리) */
+.custom-sunday-disabled {
+  color: #ccc !important; /* 회색 텍스트 */
+  pointer-events: none; /* 클릭 불가 처리 */
+}
+
+/* 지난달 또는 다음달에 속한 회색 날짜 */
+.react-datepicker__day--outside-month {
+  color: #ccc !important; /* 회색 텍스트 */
+}
+
+/* 비활성화된 날짜 (클릭 불가) */
+/* .react-datepicker__day--disabled */
+
+/* 팝업 모드에서 생기는 화살표 삼각형 */
+/* .react-datepicker__triangle */
+
+/* 이전 달로 이동하는 화살표 */
+/* .react-datepicker__navigation--previous */
+
+/* 다음 달로 이동하는 화살표  */
+/* .react-datepicker__navigation--next */
