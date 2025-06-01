@@ -3,8 +3,11 @@ import CountryButton from "../../components/button/CountryButton";
 import SearchBar from "../../components/SearchBar";
 import CityCard from "../../components/card/CityCard";
 import { COUNTRY_CITY } from "../../constants/countries";
+import usePrefetchCityInfos from "../../hooks/usePrefetchCityInfos";
 
 const MainPage = () => {
+  usePrefetchCityInfos();
+
   const [result, setResult] = useState<string>("");
   const [clickedCountry, setClickedCountry] = useState<string>("전체");
   const [inputValue, setInputValue] = useState<string | null>(null);
