@@ -13,6 +13,10 @@ body {
   font-weight: normal;
 }
 
+img {
+  image-rendering: auto; /* 또는 'high-quality'로 */
+}
+
 @theme {
   --color-unselected: #e2d3eb;
   --color-common: #e9c2ff;

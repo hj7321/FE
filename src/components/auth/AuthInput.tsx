@@ -30,8 +30,6 @@ const AuthInput = ({
     if (type === "password") setInputType("text");
   };
 
-  // console.log(label, ": ", inputValue);
-
   return (
     <label>
       <p className="text-[12px] mb-[1px] text-[#333333]">{label}</p>

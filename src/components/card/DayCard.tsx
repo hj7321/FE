@@ -2,24 +2,43 @@ import clsx from "clsx";
 
 interface DayCardProps {
   dayNum: number;
-  isSelected?: boolean;
+  isDark?: boolean;
+  isBig?: boolean;
+  isClickable?: boolean;
+  date: string;
+  handleChangeSelectedDate?: (dayNum: number) => void;
 }
 
-const DayCard = ({ dayNum, isSelected }: DayCardProps) => {
+const DayCard = ({
+  dayNum,
+  isDark,
+  isBig,
+  isClickable,
+  date,
+  handleChangeSelectedDate,
+}: DayCardProps) => {
   return (
-    <div className="flex gap-[3px] items-center">
+    <div
+      onClick={() => {
+        if (isClickable && handleChangeSelectedDate) {
+          handleChangeSelectedDate(dayNum);
+        }
+      }}
+      className="flex gap-[3px] items-center"
+    >
       <div
         style={{ backgroundColor: `var(--color-day${dayNum})` }}
         className={clsx(
           "rounded-[4px] text-white py-[2px] text-center ",
-          isSelected
-            ? "w-[54px] text-[13px]"
-            : "w-[38px] text-[9px] opacity-40 hover:cursor-pointer hover:opacity-100"
+          isBig ? "w-[54px] text-[13px]" : "w-[38px] text-[9px]",
+          !isDark && "opacity-40 hover:cursor-pointer hover:opacity-100"
         )}
       >
         DAY {dayNum}
       </div>
-      {isSelected && <p className="text-[14.5px]">05/01 (목)</p>}
+      {isDark && (
+        <p className={clsx(isBig ? "text-[14.5px]" : "text-[11px]")}>{date}</p>
+      )}
     </div>
   );
 };
