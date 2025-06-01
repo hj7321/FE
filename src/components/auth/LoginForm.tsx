@@ -34,7 +34,6 @@ const LoginForm = () => {
     },
     onSuccess: (response) => {
       login(response.headers.authorization);
-      // 액세스 토큰 저장
       console.log("✅ 로그인 완료", response);
       navigate("/");
     },
