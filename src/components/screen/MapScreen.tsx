@@ -57,7 +57,7 @@ const MapScreen = () => {
     };
   }, []);
 
-  return <div ref={mapRef} className="h-[690px] w-[860px]" />;
+  return <div ref={mapRef} className="h-[100vh] w-[100vw]" />;
 };
 
 export default MapScreen;
