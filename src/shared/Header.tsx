@@ -37,7 +37,12 @@ const Header = () => {
         {isLogin ? (
           <>
             <Link to="/my">내 정보</Link>
-            <button onClick={() => logout()}>로그아웃</button>
+            <button
+              onClick={() => logout()}
+              className="hover:cursor-pointer hover:font-bold"
+            >
+              로그아웃
+            </button>
           </>
         ) : (
           <>

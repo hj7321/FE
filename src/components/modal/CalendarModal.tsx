@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../../styles/calendar.css";
 import { useDateStore } from "../../stores/date.store";
 import { useModalStore } from "../../stores/modal.store";
-import { isSameDay } from "date-fns";
+import { isSameDay, startOfDay } from "date-fns";
 import { ko } from "date-fns/locale";
 
 const CalendarModal = () => {
@@ -83,9 +83,11 @@ const CalendarModal = () => {
         // renderCustomHeader={(props) => <CalendarHeader {...props} />}
         dayClassName={(date) => {
           const isSunday = date.getDay() === 0;
+          const isPast = date < startOfDay(new Date()); // 오늘 이전인지
           const isOutOfRange = maxDate && date > maxDate;
 
-          if (isSunday && isOutOfRange) return "custom-sunday-disabled"; // 회색
+          if (isSunday && (isPast || isOutOfRange))
+            return "custom-sunday-disabled"; // 회색
           if (isSunday) return "custom-sunday"; // 빨간색
 
           return "";
