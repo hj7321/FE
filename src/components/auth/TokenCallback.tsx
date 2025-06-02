@@ -12,12 +12,12 @@ const TokenCallback = () => {
     const receiveToken = (event: MessageEvent) => {
       // 보안을 위해 특정 origin에서만 메시지를 받도록 제한할 수 있음
       // if (event.origin !== "http://localhost:8081") return; // 보안 체크
-      console.log(event.data);
-      const { accessToken } = event.data; // 메시지에서 accessToken 추출
-
-      console.log(accessToken);
-      login(accessToken);
-      navigate("/");
+      const { accessToken } = event.data || {};
+      if (accessToken) {
+        console.log("🔐 토큰 수신:", accessToken);
+        login(accessToken);
+        navigate("/");
+      }
     };
 
     // window 객체에 message 이벤트 리스너 추가 (다른 창이나 iframe에서 postMessage로 보낸 메시지를 수신함)
