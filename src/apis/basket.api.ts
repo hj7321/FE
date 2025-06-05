@@ -10,7 +10,7 @@ import {
 export const readBasket = async ({
   countryName,
   regionName,
-}: CountryAndRegion) => {
+}: CountryAndRegion): Promise<InsertBasketDataType> => {
   const path = "/account/basket/read";
 
   try {

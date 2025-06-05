@@ -3,13 +3,32 @@ import FavoritePlaceListBox from "../FavoritePlaceListBox";
 import clsx from "clsx";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
-const FavoritePlaceListButton = () => {
+interface FavoritePlaceListButtonProps {
+  regionName: string;
+}
+
+const FavoritePlaceListButton = ({
+  regionName,
+}: FavoritePlaceListButtonProps) => {
   const [showBox, setShowBox] = useState<boolean>(false);
-  const favoriteList = useFavoriteListStore((state) => state.favoriteList);
+  const placeLists = useFavoriteListStore(
+    (state) => state.regionMap[regionName]
+  );
+
+  const oldFavoriteList = placeLists?.oldFavoriteList ?? [];
+  const newFavoriteList = placeLists?.newFavoriteList ?? [];
+
+  const favoriteList = [...oldFavoriteList, ...newFavoriteList];
 
   return (
     <div>
-      {showBox && <FavoritePlaceListBox />}
+      {showBox && (
+        <FavoritePlaceListBox
+          oldFavoriteList={oldFavoriteList}
+          newFavoriteList={newFavoriteList}
+          regionName={regionName}
+        />
+      )}
       <button
         className="fixed bottom-[80px] right-[10px]"
         onClick={() => setShowBox(!showBox)}

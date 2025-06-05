@@ -4,6 +4,7 @@ import SearchBar from "../../components/SearchBar";
 import CityCard from "../../components/card/CityCard";
 import { COUNTRY_CITY } from "../../constants/countries";
 import usePrefetchCityInfos from "../../hooks/usePrefetchCityInfos";
+import clsx from "clsx";
 
 const MainPage = () => {
   usePrefetchCityInfos();
@@ -46,7 +47,7 @@ const MainPage = () => {
 
     // 조합 중이 아니거나, 결과가 있을 경우 갱신
     setSearchResult(matched);
-  }, [inputValue]);
+  }, [inputValue, isComposing]);
 
   return (
     <>
@@ -87,7 +88,18 @@ const MainPage = () => {
             </CountryButton>
           ))}
         </div>
-        <div className="py-[20px] flex flex-wrap gap-x-[35px] gap-y-[30px]">
+        <div
+          className={clsx(
+            "py-[20px]  gap-x-[35px] gap-y-[30px]",
+            (clickedCountry !== "전체" &&
+              COUNTRY_CITY[clickedCountry].length < 5) ||
+              (clickedCountry === "전체" &&
+                searchResult.length > 0 &&
+                searchResult.length < 5)
+              ? "flex flex-wrap"
+              : "grid grid-cols-[repeat(auto-fit,_minmax(303.5px,_auto))] justify-between"
+          )}
+        >
           {inputValue?.trim()
             ? searchResult.length > 0 || isComposing
               ? searchResult.map((result) => (

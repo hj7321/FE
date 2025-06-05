@@ -56,7 +56,7 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
             href={accommodationBookingURL}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-[100px] rounded-[4px] flex justify-center items-center gap-[5px] tsext-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+            className="w-1/5 rounded-[4px] flex justify-center items-center gap-[5px] tsext-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
           >
             <img
               src="/images/accommodation.svg"
@@ -69,7 +69,7 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
             href={airlineTicketBookingURL}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-[100px] rounded-[4px] flex justify-center items-center gap-[5px] text-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+            className="w-1/4 rounded-[4px] flex justify-center items-center gap-[5px] text-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
           >
             <img
               src="/images/plane-ticket.svg"
@@ -80,7 +80,7 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
           </a>
           <button
             onClick={handleDecideTravelArea}
-            className="w-[210px] text-center rounded-[4px] text-white bg-common py-[10px] px-[15px] text-[14px] hover:bg-selected hover:cursor-pointer"
+            className="w-1/2 text-center rounded-[4px] text-white bg-common py-[10px] px-[15px] text-[14px] hover:bg-selected hover:cursor-pointer"
           >
             여행 지역 정하기
           </button>
