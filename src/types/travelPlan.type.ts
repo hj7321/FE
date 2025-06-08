@@ -2,6 +2,14 @@ export type TravelPlanId = {
   id: number;
 };
 
+export type MiniSchedule = {
+  [time: string]: {
+    placeName: string;
+    placeType: string;
+    period: string;
+  }[];
+};
+
 export type Schedule = {
   scheduleId: number;
   scheduleName: string;
@@ -20,8 +28,9 @@ export type ScheduleByDay = {
   locationSeq: number;
   startTime: string;
   endTime: string;
+  placeId?: string;
   placeName: string;
-  placeType: string;
+  placeType?: string;
   address?: string;
   latitude?: number;
   longitude?: number;
@@ -32,7 +41,7 @@ export type DetailSchedule = {
   scheduleByDay: ScheduleByDay[];
 };
 
-export type EntireTravelSchedule = {
+export type CreateTravelSchedule = {
   scheduleName: string;
   startDate: string;
   endDate: string;
@@ -40,4 +49,8 @@ export type EntireTravelSchedule = {
   countryName: string;
   regionName: string;
   detailSchedule: DetailSchedule[];
+};
+
+export type UpdateTravelSchedule = CreateTravelSchedule & {
+  scheduleId: number;
 };
