@@ -5,7 +5,7 @@ interface ScheduleCardProps {
   isNeededDeleteButton?: boolean;
   isFirstSchedule?: boolean;
   placeName: string;
-  placePurpose: string;
+  placeType: string;
   period: string;
 }
 
@@ -14,7 +14,7 @@ const ScheduleCard = memo(
     isNeededDeleteButton,
     isFirstSchedule,
     placeName,
-    placePurpose,
+    placeType,
     period,
   }: ScheduleCardProps) => {
     return (
@@ -40,7 +40,7 @@ const ScheduleCard = memo(
               alt="icon"
               className="text-[7px] h-[7px]"
             />
-            <p className="text-[9px] text-white">{placePurpose}</p>
+            <p className="text-[9px] text-white">{placeType}</p>
           </div>
         </div>
         <div className="flex justify-between items-end">
