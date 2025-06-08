@@ -28,7 +28,18 @@ const TravelPlanCard = memo(
     const handleOpenModal = () => {
       openModal(
         <TravelPlanModal
-          cardImg="/images/cities/바르셀로나.webp"
+          cardImg={cardImg}
+          travelTitle={travelTitle}
+          travelStartDate={travelStartDate}
+          travelEndDate={travelEndDate}
+          travelPeople={travelPeople}
+          travelPlace={travelPlace}
+          isEnded={true}
+        />
+      );
+      openModal(
+        <TravelPlanModal
+          cardImg={"/images/cities/바르셀로나.webp"}
           travelTitle="황금연휴에 가는 해외여행😊"
           travelStartDate="2025.05.01"
           travelEndDate="2025.05.07"
