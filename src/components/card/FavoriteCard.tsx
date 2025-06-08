@@ -5,22 +5,28 @@ interface FavoriteCardProps {
   cardImg: string;
   cardName: string;
   placeId: string;
-  regionName: string;
   isNew: boolean;
 }
 
 const FavoriteCard = memo(
-  ({ cardImg, cardName, placeId, regionName, isNew }: FavoriteCardProps) => {
+  ({ cardImg, cardName, placeId, isNew }: FavoriteCardProps) => {
+    console.log("🖼️ 카드 이미지 확인:", cardImg);
     const deleteOldFavoriteList = useFavoriteListStore(
       (state) => state.deleteOldFavoriteList
     );
     const deleteNewFavoriteList = useFavoriteListStore(
       (state) => state.deleteNewFavoriteList
     );
+    const updateDeleteList = useFavoriteListStore(
+      (state) => state.updateDeleteList
+    );
 
     const handleDeleteFavoriteList = () => {
-      if (isNew) deleteNewFavoriteList(regionName, placeId);
-      else deleteOldFavoriteList(regionName, placeId);
+      if (isNew) deleteNewFavoriteList(placeId);
+      else {
+        deleteOldFavoriteList(placeId);
+        updateDeleteList({ placeId });
+      }
     };
 
     return (
@@ -46,6 +52,10 @@ const FavoriteCard = memo(
         <img
           src={cardImg}
           alt={cardName}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/images/default.png";
+          }}
           loading="lazy"
           className="text-[12px] rounded-[4px] h-[107px] w-[137px] object-cover"
         />
