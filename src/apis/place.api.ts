@@ -1,6 +1,8 @@
 import axios from "axios";
 import {
+  CountryAndRegion,
   PlaceId,
+  Places,
   ReadPlaceDetailResponse,
   ReadPlaceListRequestType,
   ReadPlaceListResponse,
@@ -43,6 +45,32 @@ export const readPlaceDetail = async ({
 
   try {
     const response = await api.get(path);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("[readPlaceDetail] Axios 에러: ", error);
+    } else {
+      console.error("[readPlaceDetail] 일반 에러: ", error);
+    }
+    throw error;
+  }
+};
+
+// 인기 장소 top20 요청
+export const readPopularPlace = async ({
+  countryName,
+  regionName,
+}: CountryAndRegion): Promise<Places[]> => {
+  const path = "/discovery/popularPlaces";
+
+  try {
+    const response = await api.get(path, {
+      params: {
+        countryName,
+        regionName,
+      },
+    });
     const data = response.data;
     return data;
   } catch (error) {
