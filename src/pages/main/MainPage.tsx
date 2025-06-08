@@ -90,7 +90,7 @@ const MainPage = () => {
         </div>
         <div
           className={clsx(
-            "py-[20px]  gap-x-[35px] gap-y-[30px]",
+            "py-[20px] gap-x-[35px] gap-y-[30px]",
             (clickedCountry !== "전체" &&
               COUNTRY_CITY[clickedCountry].length < 5) ||
               (clickedCountry === "전체" &&
