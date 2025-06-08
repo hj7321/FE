@@ -66,7 +66,7 @@ export const checkCode = async ({ email, code }: CheckCodeType) => {
 };
 
 // 아이디 중복체크
-export const checkId = async ({ id }: CheckIdType) => {
+export const checkId = async ({ id }: CheckIdType): Promise<boolean> => {
   const path = "/account/idDuplicatedCheck";
 
   try {
