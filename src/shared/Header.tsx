@@ -1,12 +1,51 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../stores/auth.store";
 import { useState } from "react";
 import clsx from "clsx";
+import { useFavoriteListStore } from "../stores/favoriteList.store";
+import useBasketMutations from "../hooks/useBasketMutations";
 
 const Header = () => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const navigate = useNavigate();
   const isLogin = useAuthStore((state) => state.isLogin);
   const logout = useAuthStore((state) => state.logout);
+  const addList = useFavoriteListStore((state) => state.addList);
+  const deleteList = useFavoriteListStore((state) => state.deleteList);
+  const countryName = useFavoriteListStore((state) => state.countryName);
+  const regionName = useFavoriteListStore((state) => state.regionName);
+  const resetName = useFavoriteListStore((state) => state.resetName);
+  const resetAllList = useFavoriteListStore((state) => state.resetAllList);
+
+  const { insertBasketDataMutateAsync, deleteBasketDataMutateAsync } =
+    useBasketMutations(countryName!, regionName!);
+
+  console.log("addList: ", addList);
+  console.log("deleteList: ", deleteList);
+
+  const handleLogout = async () => {
+    if (countryName && regionName) {
+      if (addList.length > 0) {
+        await insertBasketDataMutateAsync({
+          countryName,
+          regionName,
+          places: addList,
+        });
+      }
+
+      for (const list of deleteList) {
+        await deleteBasketDataMutateAsync({
+          countryName,
+          regionName,
+          placeId: [list.placeId],
+        });
+      }
+      resetName();
+      resetAllList();
+    }
+    navigate("/");
+    logout();
+  };
 
   return (
     <header className="px-[100px] py-[10px] flex items-center justify-between">
@@ -38,7 +77,7 @@ const Header = () => {
           <>
             <Link to="/my">내 정보</Link>
             <button
-              onClick={() => logout()}
+              onClick={handleLogout}
               className="hover:cursor-pointer hover:font-bold"
             >
               로그아웃
