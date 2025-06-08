@@ -1,97 +1,31 @@
-import { Link } from "react-router";
-import RecentPlaceCard from "../../components/card/RecentPlaceCard";
-import TravelPlanCard from "../../components/card/TravelPlanCard";
+import useReadTravelPlans from "../../hooks/useReadTravelPlans";
+import TravelHistorySection from "../../components/section/TravelHistorySection";
+import RecentlyViewSection from "../../components/section/RecentlyViewSection";
+import { getRecentPlaces } from "../../utils/getRecentPlace";
 
 const MyPage = () => {
+  const { data: { allPlans, scheduledPlans, pastPlans } = {} } =
+    useReadTravelPlans();
+  console.log(allPlans);
+
+  const recentPlaces = getRecentPlaces();
+
   return (
-    <div className="px-[100px] py-[10px] flex flex-col gap-[40px]">
-      <section className="flex flex-col">
-        <div className="flex justify-between items-end">
-          <h1 className="font-bold text-[22px]">여행 기록 ✈️</h1>
-          <Link
-            to="/travel-history"
-            className="text-[12px] text-[#a6a6a6] mr-[3px]"
-          >
-            더보기
-          </Link>
-        </div>
-        <div className="mt-[7px] flex flex-wrap gap-x-[20px] gap-y-[15px]">
-          <TravelPlanCard
-            cardImg="/images/cities/나폴리.webp"
-            travelTitle="황금연휴에 가는 해외여행😊"
-            travelStartDate="2025.05.01"
-            travelEndDate="2025.05.07"
-            travelPeople={8}
-            travelPlace="스페인 바르셀로나"
-            isEnded={false}
-          />
-          <TravelPlanCard
-            cardImg="/images/cities/바르셀로나.webp"
-            travelTitle="황금연휴에 가는 해외여행😊"
-            travelStartDate="2025.05.01"
-            travelEndDate="2025.05.07"
-            travelPeople={8}
-            travelPlace="스페인 바르셀로나"
-            isEnded={true}
-          />
-          <TravelPlanCard
-            cardImg="/images/cities/바르셀로나.webp"
-            travelTitle="황금연휴에 가는 해외여행😊"
-            travelStartDate="2025.05.01"
-            travelEndDate="2025.05.07"
-            travelPeople={8}
-            travelPlace="스페인 바르셀로나"
-            isEnded={false}
-          />
-          <TravelPlanCard
-            cardImg="/images/cities/바르셀로나.webp"
-            travelTitle="황금연휴에 가는 해외여행😊"
-            travelStartDate="2025.05.01"
-            travelEndDate="2025.05.07"
-            travelPeople={8}
-            travelPlace="스페인 바르셀로나"
-            isEnded={true}
-          />
-        </div>
-      </section>
-      <section className="flex flex-col">
-        <div className="flex justify-between items-end">
-          <h1 className="font-bold text-[22px]">최근에 본 장소📍</h1>
-          <Link
-            to="/recently-viewed-places"
-            className="text-[12px] text-[#a6a6a6] mr-[3px]"
-          >
-            더보기
-          </Link>
-        </div>
-        <div className="mt-[7px] flex flex-wrap gap-x-[20px] gap-y-[30px]">
-          <RecentPlaceCard
-            cardImg="/images/default.png"
-            countryName="이탈리아 로마"
-            placeName="성 베드로 대성당"
-          />
-          <RecentPlaceCard
-            cardImg="/images/default.png"
-            countryName="이탈리아 로마"
-            placeName="성 베드로 대성당"
-          />
-          <RecentPlaceCard
-            cardImg="/images/default.png"
-            countryName="이탈리아 로마"
-            placeName="성 베드로 대성당"
-          />
-          <RecentPlaceCard
-            cardImg="/images/default.png"
-            countryName="이탈리아 로마"
-            placeName="성 베드로 대성당"
-          />
-          <RecentPlaceCard
-            cardImg="/images/default.png"
-            countryName="이탈리아 로마"
-            placeName="성 베드로 대성당"
-          />
-        </div>
-      </section>
+    <div className="px-[100px] py-[10px] flex flex-col">
+      <TravelHistorySection
+        allPlans={allPlans ?? []}
+        scheduledPlans={scheduledPlans ?? []}
+        pastPlans={pastPlans ?? []}
+        maxCount={4}
+        showHeaderLink={true}
+        linkToHeader="/travel-history"
+      />
+      <RecentlyViewSection
+        recentPlaces={recentPlaces}
+        maxCount={5}
+        showHeaderLink={true}
+        linkToHeader="/recently-viewed-places"
+      />
     </div>
   );
 };

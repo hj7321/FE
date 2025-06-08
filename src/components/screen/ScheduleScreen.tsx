@@ -2,11 +2,29 @@ import { useEffect, useRef, useState } from "react";
 import { useDateStore } from "../../stores/date.store";
 import { getDateMap } from "../../utils/formatDateRange";
 import DayCard from "../card/DayCard";
-import ScheduleCard from "../card/ScheduleCard";
-import TimeInfo from "../information/TimeInfo";
-import Timeline from "../Timeline";
 import ChangeDateOverlay from "../overlay/ChangeDateOverlay";
-import TimeSlot from "../TimeSlot";
+import ScheduleUnit from "../schedule/ScheduleUnit";
+import { useDragDropManager } from "react-dnd";
+import { MiniSchedule } from "../../types/travelPlan.type";
+
+const timeline = [
+  "07 : 00",
+  "08 : 00",
+  "09 : 00",
+  "10 : 00",
+  "11 : 00",
+  "12 : 00",
+  "13 : 00",
+  "14 : 00",
+  "15 : 00",
+  "16 : 00",
+  "17 : 00",
+  "18 : 00",
+  "19 : 00",
+  "20 : 00",
+  "21 : 00",
+  "22 : 00",
+];
 
 const ScheduleScreen = () => {
   const [titleInput, setTitleInput] = useState<string>("여행 1");
@@ -14,7 +32,8 @@ const ScheduleScreen = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [dayNum, setDayNum] = useState<number>(1);
   const [isClicked, setIsClicked] = useState<boolean>(false);
-
+  const [highlightedTime, setHighlightedTime] = useState<string | null>(null);
+  const [schedule, setSchedule] = useState<MiniSchedule>({});
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
   const travelStartDate = useDateStore((state) => state.travelStartDate);
@@ -71,6 +90,39 @@ const ScheduleScreen = () => {
       setPeopleInput(onlyNumbers);
     }
   };
+
+  // 드롭될 때 실행되는 함수
+  const handleDropPlace = (
+    time: string,
+    placeName: string,
+    placeType: string
+  ) => {
+    setSchedule((prev) => ({
+      ...prev,
+      [time]: [
+        ...(prev[time] || []),
+        { placeName, placeType, period: "09:00 ~ 09:45" }, // period는 예시
+      ],
+    }));
+  };
+
+  useEffect(() => {
+    try {
+      const dragDropManager = useDragDropManager();
+      const monitor = dragDropManager.getMonitor();
+
+      const unsubscribe = monitor.subscribeToStateChange(() => {
+        if (!monitor.isDragging()) {
+          setHighlightedTime(null); // 드래그 종료 시 초기화
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.warn("DndContext가 아직 초기화되지 않음:", error);
+    }
+  }, []);
+
   return (
     <div className="bg-white h-screen flex flex-col border-r border-[#EDEDED] w-[290px]">
       <div className="px-[15px] py-[12px]">
@@ -142,74 +194,29 @@ const ScheduleScreen = () => {
         </div>
       </div>
       <div className="px-[15px] pt-[5px] py-[15px] overflow-y-auto scrollbar-custom w-[278px]">
-        <TimeInfo dayNum={1} time="07 : 00" />
+        {/* <TimeInfo dayNum={1} time="07 : 00" />
         <div className="flex gap-[10px]">
           <Timeline dayNum={1} numOfCard={1} />
           <ScheduleCard
             isFirstSchedule
             placeName="트레비 분수"
-            placePurpose="관광"
+            placeType="관광"
             period="09:00 ~ 09:45"
             isNeededDeleteButton
           />
-        </div>
-        <TimeInfo dayNum={1} time="08 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-          <TimeSlot time="09: 00" />
-        </div>
-        <TimeInfo dayNum={1} time="09 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="10 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="11 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="12 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="13 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="14 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="15 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="16 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="17 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="18 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="19 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="20 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
-        <TimeInfo dayNum={1} time="21 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-        </div>
+        </div> */}
+        {timeline.map((timeElement) => (
+          <ScheduleUnit
+            dayNum={1}
+            time={timeElement}
+            numOfCard={1}
+            isHighlighted={highlightedTime === timeElement}
+            highlightedTime={highlightedTime}
+            setHighlightedTime={setHighlightedTime}
+            onDropPlace={handleDropPlace}
+            schedule={schedule}
+          />
+        ))}
       </div>
     </div>
   );

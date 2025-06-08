@@ -5,6 +5,7 @@ export type PlaceId = {
 export type Place = PlaceId & {
   placeName: string;
   placeType?: string;
+  photoUrl?: string | null;
   address: string;
   latitude?: number;
   longitude?: number;
@@ -27,15 +28,17 @@ export type ReadPlaceListRequestType = CountryAndRegion & {
   pageToken: string | null;
 };
 
+export type CookieSavePlace = CountryAndRegion & Places;
+
 export type Places = PlaceId & {
   placeName: string;
   placeType?: string;
-  photo?: string | null;
+  photoUrl?: string | null;
 };
 
 export type ReadPlaceListResponse = {
   places: Places[];
-  pageToken?: string;
+  pageToken: string | null;
 };
 
 export type ReadPlaceDetailResponse = PlaceId & {

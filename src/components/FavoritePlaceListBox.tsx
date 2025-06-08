@@ -1,9 +1,19 @@
 import { useNavigate } from "react-router";
 import FavoriteCard from "./card/FavoriteCard";
-import { useFavoriteListStore } from "../stores/favoriteList.store";
+import { Place } from "../types/place.type";
 
-const FavoritePlaceListBox = () => {
-  const favoriteList = useFavoriteListStore((state) => state.favoriteList);
+interface FavoritePlaceListBoxProps {
+  oldFavoriteList: Place[];
+  newFavoriteList: Place[];
+}
+
+const FavoritePlaceListBox = ({
+  oldFavoriteList,
+  newFavoriteList,
+}: FavoritePlaceListBoxProps) => {
+  console.log(oldFavoriteList);
+  console.log(newFavoriteList);
+  const favoriteList = [...oldFavoriteList, ...newFavoriteList];
   const navigate = useNavigate();
 
   const handlePlanTravel = () => {
@@ -14,11 +24,22 @@ const FavoritePlaceListBox = () => {
   return (
     <div className="scrollbar-partial-rounded fixed bottom-[90px] right-[85px] z-[1000]">
       <div className="flex flex-wrap justify-between gap-y-[20px] rounded-t-[10px] bg-white px-[20px] py-[15px] pb-[20px] w-[380px] max-h-[530px] [box-shadow:0px_0px_20px_rgba(0,0,0,0.6)] overflow-y-auto scrollbar-custom">
-        {favoriteList.map((item) => (
+        {oldFavoriteList.map((item) => (
           <FavoriteCard
-            key={`${item.placeName} ${item.placeImg}`}
-            cardImg={item.placeImg}
+            key={`${item.placeName} ${item.placeId}`}
+            cardImg={item.photoUrl ?? "/images/default.png"}
             cardName={item.placeName}
+            placeId={item.placeId}
+            isNew={false}
+          />
+        ))}
+        {newFavoriteList.map((item) => (
+          <FavoriteCard
+            key={`${item.placeName} ${item.placeId}`}
+            cardImg={item.photoUrl ?? "/images/default.png"}
+            cardName={item.placeName}
+            placeId={item.placeId}
+            isNew={true}
           />
         ))}
       </div>

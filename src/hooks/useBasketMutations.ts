@@ -6,14 +6,14 @@ import {
 } from "../types/place.type";
 import { deleteBasketData, insertBasketData } from "../apis/basket.api";
 
-const useBasketMutations = (place: string) => {
-  const { mutate: insertBasketDataMutate } = useMutation<
-    AxiosResponse,
-    Error,
-    InsertBasketDataType
-  >({
-    mutationKey: ["insertBasketData", place],
+const useBasketMutations = (countryName: string, regionName: string) => {
+  const {
+    mutate: insertBasketDataMutate,
+    mutateAsync: insertBasketDataMutateAsync,
+  } = useMutation<AxiosResponse, Error, InsertBasketDataType>({
+    mutationKey: ["insertBasketData", countryName, regionName],
     mutationFn: insertBasketData,
+    networkMode: "always", // <- 추가!
     onSuccess: (response) => {
       console.log("✅ 장바구니 추가 api 요청 성공", response);
     },
@@ -23,13 +23,13 @@ const useBasketMutations = (place: string) => {
     },
   });
 
-  const { mutate: deleteBasketDataMutate } = useMutation<
-    AxiosResponse,
-    Error,
-    DeleteBasketDataType
-  >({
-    mutationKey: ["deleteBasketData", place],
+  const {
+    mutate: deleteBasketDataMutate,
+    mutateAsync: deleteBasketDataMutateAsync,
+  } = useMutation<AxiosResponse, Error, DeleteBasketDataType>({
+    mutationKey: ["deleteBasketData", countryName, regionName],
     mutationFn: deleteBasketData,
+    networkMode: "always", // <- 추가!
     onSuccess: (response) => {
       console.log("✅ 장바구니 삭제 api 요청 성공", response);
     },
@@ -41,7 +41,9 @@ const useBasketMutations = (place: string) => {
 
   return {
     insertBasketDataMutate,
+    insertBasketDataMutateAsync,
     deleteBasketDataMutate,
+    deleteBasketDataMutateAsync,
   };
 };
 

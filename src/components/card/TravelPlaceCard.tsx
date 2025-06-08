@@ -3,16 +3,35 @@ import { useModalStore } from "../../stores/modal.store";
 import PlaceModal from "../modal/PlaceModal";
 import { DragPreviewImage, useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import { useQuery } from "@tanstack/react-query";
+import { ReadPlaceDetailResponse } from "../../types/place.type";
+import { readPlaceDetail } from "../../apis/place.api";
 
 interface TravelPlaceCardProps {
   cardName: string;
   cardImg: string;
+  placeId: string;
   isFavorite?: boolean;
 }
 
 const TravelPlaceCard = memo(
-  ({ cardName, cardImg, isFavorite }: TravelPlaceCardProps) => {
+  ({ cardName, cardImg, placeId, isFavorite }: TravelPlaceCardProps) => {
     const openModal = useModalStore((state) => state.openModal);
+
+    const { refetch } = useQuery<
+      ReadPlaceDetailResponse,
+      Error,
+      ReadPlaceDetailResponse,
+      string[]
+    >({
+      queryKey: ["readPlaceDetail", placeId],
+      queryFn: () => readPlaceDetail({ placeId }),
+      staleTime: 60 * 60 * 1000, // 1시간 동안 fresh 상태로 유지
+      gcTime: 2 * 60 * 60 * 1000, // 2시간 동안 캐시 유지 (garbage collection 대상 제외)
+      refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
+      enabled: false,
+      retry: 2,
+    });
 
     // 1. DOM 요소에 접근하기 위해 useRef를 사용해 HTMLDivElement에 대한 참조 생성
     const ref = useRef<HTMLDivElement>(null);
@@ -34,8 +53,12 @@ const TravelPlaceCard = memo(
     drag(ref); // 연결
     preview(getEmptyImage(), { captureDraggingState: true }); // 기본 preview 제거
 
-    const handleOpenModal = () => {
-      openModal(<PlaceModal cardName={cardName} cardImg={cardImg} />);
+    const handleOpenModal = async () => {
+      const { data } = await refetch();
+      if (!data) return;
+      openModal(
+        <PlaceModal cardName={cardName} cardImg={cardImg} placeData={data} />
+      );
     };
 
     return (

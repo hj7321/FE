@@ -1,5 +1,5 @@
 interface TypeButtonProps {
-  buttonName: "전체보기" | "명소" | "맛집" | "호텔";
+  buttonName: "전체보기" | "관광" | "맛집" | "숙소";
 }
 
 const TypeButton = ({ buttonName }: TypeButtonProps) => {
