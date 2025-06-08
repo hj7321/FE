@@ -1,6 +1,6 @@
 import ScheduleCard from "../card/ScheduleCard";
-import Timeline from "../Timeline";
-import TimeInfo from "./TimeInfo";
+import Timeline from "../schedule/Timeline";
+import TimeInfo from "../schedule/TimeInfo";
 
 interface TravelPlanInfoProps {
   dayNum: number;
@@ -28,13 +28,13 @@ const TravelPlanInfo = ({ dayNum, date }: TravelPlanInfoProps) => {
               <ScheduleCard
                 isFirstSchedule
                 placeName="트레비 분수"
-                placePurpose="관광"
+                placeType="관광"
                 period="09:00 ~ 09:30"
               />
               <ScheduleCard
                 isNeededDeleteButton
                 placeName="콜로세움"
-                placePurpose="관광"
+                placeType="관광"
                 period="09:35 ~ 09:45"
               />
             </div>
@@ -45,7 +45,7 @@ const TravelPlanInfo = ({ dayNum, date }: TravelPlanInfoProps) => {
             <ScheduleCard
               isFirstSchedule
               placeName="트레비 분수"
-              placePurpose="관광"
+              placeType="관광"
               period="09:00 ~ 09:45"
             />
           </div>
