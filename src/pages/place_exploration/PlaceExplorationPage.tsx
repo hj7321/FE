@@ -1,20 +1,16 @@
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import FavoritePlaceListButton from "../../components/button/FavoritePlaceListButton";
 import PlaceCard from "../../components/card/PlaceCard";
 import SearchBar from "../../components/SearchBar";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Slider from "../../components/slider/Slider";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { readPlaceList } from "../../apis/place.api";
 import { useInView } from "react-intersection-observer";
-import { readBasket } from "../../apis/basket.api";
-import {
-  InsertBasketDataType,
-  Place,
-  Places,
-  ReadPlaceListResponse,
-} from "../../types/place.type";
+import { Places, ReadPlaceListResponse } from "../../types/place.type";
+import useBasketMutations from "../../hooks/useBasketMutations";
+import useReadBasket from "../../hooks/useReadBasket";
 
 const PlaceExplorationPage = () => {
   const { place } = useParams();
@@ -23,30 +19,25 @@ const PlaceExplorationPage = () => {
   const [searchResult, setSearchResult] = useState<string[]>([]);
   const [isComposing, setIsComposing] = useState<boolean>(false);
 
-  // const currentPathRef = useRef(location.pathname);
+  const location = useLocation();
+  const prevPathRef = useRef(location.pathname);
   console.log(searchResult);
+
+  const setCountryName = useFavoriteListStore((state) => state.setCountryName);
+  const setRegionName = useFavoriteListStore((state) => state.setRegionName);
 
   const addOldFavoriteList = useFavoriteListStore(
     (state) => state.addOldFavoriteList
   );
+  const addList = useFavoriteListStore((state) => state.addList);
+  const deleteList = useFavoriteListStore((state) => state.deleteList);
+  const resetAllList = useFavoriteListStore((state) => state.resetAllList);
 
-  const { data: basketData } = useQuery<
-    InsertBasketDataType,
-    Error,
-    Place[],
-    string[]
-  >({
-    queryKey: ["readBasket", countryName, regionName],
-    queryFn: () => readBasket({ countryName, regionName }),
-    staleTime: 60 * 60 * 1000, // 1시간 동안 fresh 상태로 유지
-    gcTime: 2 * 60 * 60 * 1000, // 2시간 동안 캐시 유지 (garbage collection 대상 제외)
-    refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
-    enabled: !!countryName && !!regionName,
-    retry: 2,
-    select: (data) => data.places,
-  });
+  const { insertBasketDataMutateAsync, deleteBasketDataMutateAsync } =
+    useBasketMutations(countryName, regionName);
 
-  console.log(basketData);
+  const basketData = useReadBasket(countryName!, regionName!);
+  console.log("basketData: ", basketData);
 
   const {
     data: places,
@@ -83,8 +74,7 @@ const PlaceExplorationPage = () => {
   // 4. getNextPageParam() 함수의 리턴값은 fetchNextPage() 함수가 다음 페이지를 요청할 때 pageParam으로 전달됨
   // 5. fetchNextPage() 함수는 이 값을 다시 queryFn에 전달하여 새로운 데이터를 가져옴
 
-  console.log(places);
-
+  // 이거 지워도 됨
   const { ref } = useInView({
     threshold: 1,
     onChange: (inView) => {
@@ -95,8 +85,21 @@ const PlaceExplorationPage = () => {
   });
 
   useEffect(() => {
+    if (!isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [isFetchingNextPage, hasNextPage]);
+
+  useEffect(() => {
+    if (countryName && regionName) {
+      setCountryName(countryName);
+      setRegionName(regionName);
+    }
+  }, []);
+
+  useEffect(() => {
     if (basketData) {
-      basketData.forEach((data) => addOldFavoriteList(regionName, data));
+      basketData.forEach((data) => addOldFavoriteList(data));
     }
   }, [basketData, regionName, addOldFavoriteList]);
 
@@ -120,11 +123,66 @@ const PlaceExplorationPage = () => {
     setSearchResult(matched);
   }, [inputValue]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (location.pathname !== currentPathRef.current) resetFavoriteList();
-  //   };
-  // }, [location.pathname, resetFavoriteList]);
+  // 장소 탐색 페이지를 벗어날 때 → 장바구니 추가/삭제 api 요청
+  useEffect(() => {
+    const handleRouteChange = async () => {
+      const prevPath = prevPathRef.current;
+      const currentPath = location.pathname;
+
+      if (prevPath !== currentPath) {
+        console.log("📍 경로 변경 감지!", prevPath, "→", currentPath);
+
+        if (addList.length > 0) {
+          await insertBasketDataMutateAsync({
+            countryName,
+            regionName,
+            places: addList,
+          });
+        }
+
+        if (deleteList.length > 0) {
+          for (const list of deleteList) {
+            await deleteBasketDataMutateAsync({
+              countryName,
+              regionName,
+              placeId: [list.placeId],
+            });
+          }
+        }
+
+        resetAllList();
+      }
+
+      prevPathRef.current = currentPath;
+    };
+
+    handleRouteChange();
+  }, [location.pathname]);
+
+  // 창을 끌 때(브라우저를 종료할 때) → 장바구니 추가/삭제 api 요청
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (addList.length > 0) {
+        navigator.sendBeacon(
+          "/your/api/insert",
+          JSON.stringify({ countryName, regionName, places: addList })
+        );
+      }
+      deleteList.forEach((list) => {
+        navigator.sendBeacon(
+          "/your/api/delete",
+          JSON.stringify({ countryName, regionName, placeId: [list.placeId] })
+        );
+      });
+      resetAllList();
+
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   return (
     <>
@@ -141,7 +199,7 @@ const PlaceExplorationPage = () => {
           인기 장소 TOP 20
         </h1>
         <div className="relative px-[100px] overflow-visible">
-          <Slider />
+          <Slider countryName={countryName} regionName={regionName} />
         </div>
       </section>
       <section className="flex flex-col gap-[25px] px-[100px]">
@@ -155,21 +213,20 @@ const PlaceExplorationPage = () => {
             setIsComposing={setIsComposing}
           />
         </div>
-        <div className="py-[20px] grid grid-cols-[repeat(auto-fit,_minmax(247.8px,_auto))] justify-center gap-x-[20px] gap-y-[30px]">
+        <div className="py-[20px] grid grid-cols-[repeat(auto-fit,_minmax(247.8px,_auto))] justify-between gap-x-[20px] gap-y-[30px]">
           {places &&
             places.map((place) => (
               <PlaceCard
                 key={place.placeId}
-                cardImg={place.photo ?? "/images/default.png"}
+                cardImg={place.photoUrl ?? "/images/default.png"}
                 cardName={place.placeName}
                 placeId={place.placeId}
-                regionName={regionName}
               />
             ))}
           {hasNextPage && <div ref={ref}></div>}
         </div>
       </section>
-      <FavoritePlaceListButton regionName={regionName} />
+      <FavoritePlaceListButton />
     </>
   );
 };
