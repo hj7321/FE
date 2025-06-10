@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 import RecentPlaceCard from "../card/RecentPlaceCard";
-import { CookieSavePlace } from "../../types/place.type";
+import { RecentPlace } from "../../types/place.type";
 import clsx from "clsx";
 
 interface RecentlyViewSectionProps {
-  recentPlaces: CookieSavePlace[];
+  recentPlaces: RecentPlace[];
   maxCount?: number; // MyPage에선 5개, RecentlyViewPage에선 전체
   showMyPageLink?: boolean; // 마이페이지 이동 링크 여부
   linkToMyPage?: string; // 마이페이지 링크 주소
