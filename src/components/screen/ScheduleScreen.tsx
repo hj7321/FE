@@ -194,19 +194,9 @@ const ScheduleScreen = () => {
         </div>
       </div>
       <div className="px-[15px] pt-[5px] py-[15px] overflow-y-auto scrollbar-custom w-[278px]">
-        {/* <TimeInfo dayNum={1} time="07 : 00" />
-        <div className="flex gap-[10px]">
-          <Timeline dayNum={1} numOfCard={1} />
-          <ScheduleCard
-            isFirstSchedule
-            placeName="트레비 분수"
-            placeType="관광"
-            period="09:00 ~ 09:45"
-            isNeededDeleteButton
-          />
-        </div> */}
         {timeline.map((timeElement) => (
           <ScheduleUnit
+            key={timeElement}
             dayNum={1}
             time={timeElement}
             numOfCard={1}
