@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "../stores/auth.store";
 
-const BASE_URL = "https://api.tranner.com/api";
+export const BASE_URL = "https://api.tranner.com/api";
 
 const rawAxios = axios.create(); // 인터셉터 없는 순수 인스턴스
 
