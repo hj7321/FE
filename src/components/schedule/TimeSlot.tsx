@@ -1,3 +1,4 @@
+import { Notify } from "notiflix";
 import { useRef } from "react";
 import { useDrop } from "react-dnd";
 
@@ -17,7 +18,9 @@ const TimeSlot = ({ time }: { time: string }) => {
     // 2-2. 아이템이 drop 되었을 때 호출되는 콜백 함수
     // drag 쪽에서 정의한 item 속성을 여기서 받아 사용 가능
     drop: (item: { cardName: string }) => {
-      alert(`${item.cardName}를 ${time}에 추가했습니다!`);
+      // alert(`${item.cardName}를 ${time}에 추가했습니다!`);
+      Notify.success(`${item.cardName}를 ${time}에 추가했습니다!`);
+
       // TODO: Zustand 상태로 일정 추가 로직 구현
     },
     // 2-3. 현재 드롭 영역 위에 드래그 요소가 올라와 있는지 여부를 감지

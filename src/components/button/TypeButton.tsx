@@ -1,10 +1,21 @@
+import clsx from "clsx";
+import { TravelPlanButton } from "../../types/button.type";
+
 interface TypeButtonProps {
-  buttonName: "전체보기" | "관광" | "맛집" | "숙소";
+  buttonName: TravelPlanButton;
+  isSelected: boolean;
+  onClicked: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TypeButton = ({ buttonName }: TypeButtonProps) => {
+const TypeButton = ({ buttonName, isSelected, onClicked }: TypeButtonProps) => {
   return (
-    <button className="bg-common rounded-[4px] text-[12px] px-[10px] py-[4px] w-fit h-fit text-white hover:cursor-pointer hover:bg-selected">
+    <button
+      onClick={() => onClicked(buttonName)}
+      className={clsx(
+        "bg-common rounded-[4px] text-[12px] px-[10px] py-[4px] w-fit h-fit text-white hover:cursor-pointer hover:bg-selected",
+        isSelected && "!bg-selected"
+      )}
+    >
       {buttonName}
     </button>
   );

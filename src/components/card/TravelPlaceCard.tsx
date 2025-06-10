@@ -1,37 +1,31 @@
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useModalStore } from "../../stores/modal.store";
 import PlaceModal from "../modal/PlaceModal";
 import { DragPreviewImage, useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
-import { useQuery } from "@tanstack/react-query";
-import { ReadPlaceDetailResponse } from "../../types/place.type";
-import { readPlaceDetail } from "../../apis/place.api";
+import useReadPlaceDetail from "../../hooks/useReadPlaceDetail";
+import clsx from "clsx";
+import { useMapStore } from "../../stores/map.store";
 
 interface TravelPlaceCardProps {
   cardName: string;
   cardImg: string;
   placeId: string;
+  placeType: string | undefined;
   isFavorite?: boolean;
 }
 
 const TravelPlaceCard = memo(
-  ({ cardName, cardImg, placeId, isFavorite }: TravelPlaceCardProps) => {
+  ({
+    cardName,
+    cardImg,
+    placeId,
+    placeType,
+    isFavorite = false,
+  }: TravelPlaceCardProps) => {
     const openModal = useModalStore((state) => state.openModal);
 
-    const { refetch } = useQuery<
-      ReadPlaceDetailResponse,
-      Error,
-      ReadPlaceDetailResponse,
-      string[]
-    >({
-      queryKey: ["readPlaceDetail", placeId],
-      queryFn: () => readPlaceDetail({ placeId }),
-      staleTime: 60 * 60 * 1000, // 1시간 동안 fresh 상태로 유지
-      gcTime: 2 * 60 * 60 * 1000, // 2시간 동안 캐시 유지 (garbage collection 대상 제외)
-      refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
-      enabled: false,
-      retry: 2,
-    });
+    const { refetch } = useReadPlaceDetail(placeId);
 
     // 1. DOM 요소에 접근하기 위해 useRef를 사용해 HTMLDivElement에 대한 참조 생성
     const ref = useRef<HTMLDivElement>(null);
@@ -50,12 +44,22 @@ const TravelPlaceCard = memo(
 
     // 3. 생성한 drag 함수를 DOM 참조(ref)에 연결
     // 이걸 해야 해당 DOM 요소가 드래그 가능해짐
+    useEffect(() => {
+      // 기본 preview 제거
+      preview(getEmptyImage(), { captureDraggingState: true });
+    }, [preview]);
     drag(ref); // 연결
-    preview(getEmptyImage(), { captureDraggingState: true }); // 기본 preview 제거
 
     const handleOpenModal = async () => {
       const { data } = await refetch();
       if (!data) return;
+
+      // 지도 중심 위치 업데이트
+      useMapStore
+        .getState()
+        .setCenter(data.latitude, data.longitude, data.name);
+
+      // 모달 열기
       openModal(
         <PlaceModal cardName={cardName} cardImg={cardImg} placeData={data} />
       );
@@ -77,12 +81,29 @@ const TravelPlaceCard = memo(
             src={cardImg}
             alt={cardName}
             loading="lazy"
-            className="text-[12px] rounded-[4px] h-[107px] w-[137px] object-cover"
+            className="text-[11px] rounded-[4px] h-[107px] w-[137px] object-cover"
           />
           <div className="flex justify-between">
             <div>
-              <p className="text-[14px]">{cardName}</p>
-              <p className="text-[12px]">장소</p>
+              <p
+                className={clsx(
+                  "text-[14px] overflow-hidden whitespace-nowrap text-ellipsis",
+                  isFavorite ? "w-[117px]" : "w-[137px]"
+                )}
+              >
+                {cardName}
+              </p>
+              {placeType && (
+                <p className="text-[11px]">
+                  {placeType === "ATTRACTION"
+                    ? "명소"
+                    : placeType === "RESTAURANT"
+                    ? "식당"
+                    : placeType === "HOTEL"
+                    ? "숙소"
+                    : "-"}
+                </p>
+              )}
             </div>
             {isFavorite && (
               <img

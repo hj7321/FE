@@ -6,6 +6,7 @@ import {
   ReadPlaceDetailResponse,
   ReadPlaceListRequestType,
   ReadPlaceListResponse,
+  RecentPlace,
 } from "../types/place.type";
 import { api } from "./api";
 
@@ -78,6 +79,26 @@ export const readPopularPlace = async ({
       console.error("[readPlaceDetail] Axios 에러: ", error);
     } else {
       console.error("[readPlaceDetail] 일반 에러: ", error);
+    }
+    throw error;
+  }
+};
+
+// 최근 조회 목록 출력
+export const readRecentPlace = async (
+  placeIds: string[]
+): Promise<RecentPlace[]> => {
+  const path = "/discovery/recent";
+
+  try {
+    const response = await api.post(path, { places: placeIds });
+    const data = response.data;
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("[readRecentPlace] Axios 에러: ", error);
+    } else {
+      console.error("[readRecentPlace] 일반 에러: ", error);
     }
     throw error;
   }

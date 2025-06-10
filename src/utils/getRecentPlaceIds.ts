@@ -1,6 +1,4 @@
-import { CookieSavePlace } from "../types/place.type";
-
-export const getRecentPlaces = (): CookieSavePlace[] => {
+export const getRecentPlaceIds = (): string[] => {
   const cookieName = "recent_places";
 
   const cookies = document.cookie.split("; ").reduce((acc, curr) => {
@@ -11,9 +9,9 @@ export const getRecentPlaces = (): CookieSavePlace[] => {
 
   if (cookies[cookieName]) {
     try {
-      return JSON.parse(decodeURIComponent(cookies[cookieName]));
+      return decodeURIComponent(cookies[cookieName]).split(",");
     } catch (e) {
-      console.error("❌ 쿠키 파싱 에러:", e);
+      console.error("❌ 쿠키 디코딩 에러:", e);
       return [];
     }
   }

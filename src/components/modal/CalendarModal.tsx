@@ -6,6 +6,7 @@ import { useDateStore } from "../../stores/date.store";
 import { useModalStore } from "../../stores/modal.store";
 import { isSameDay, startOfDay } from "date-fns";
 import { ko } from "date-fns/locale";
+import { Notify } from "notiflix";
 
 const CalendarModal = () => {
   const [calendarFocusDate, setCalendarFocusDate] = useState(new Date()); // 달력 기준 날짜
@@ -43,7 +44,11 @@ const CalendarModal = () => {
   };
 
   const handleCompleteTravelPeriod = () => {
-    if (!startDate || !endDate) return alert("여행 기간을 선택해주세요.");
+    if (!startDate || !endDate) {
+      // alert("여행 기간을 선택해주세요.");
+      Notify.failure("여행 기간을 선택해주세요.");
+      return;
+    }
     setDates(startDate, endDate);
     closeModal();
   };

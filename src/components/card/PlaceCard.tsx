@@ -1,12 +1,10 @@
 import { memo } from "react";
 import { useModalStore } from "../../stores/modal.store";
 import PlaceModal from "../modal/PlaceModal";
-import { useQuery } from "@tanstack/react-query";
-import { readPlaceDetail } from "../../apis/place.api";
-import { ReadPlaceDetailResponse } from "../../types/place.type";
-import { saveRecentPlace } from "../../utils/saveRecentPlace";
 import { useAuthStore } from "../../stores/auth.store";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
+import useReadPlaceDetail from "../../hooks/useReadPlaceDetail";
+import { saveRecentPlaceId } from "../../utils/saveRecentPlaceId";
 
 interface PlaceCardProps {
   cardImg: string;
@@ -20,32 +18,13 @@ const PlaceCard = memo(({ cardImg, cardName, placeId }: PlaceCardProps) => {
   const countryName = useFavoriteListStore((state) => state.countryName);
   const regionName = useFavoriteListStore((state) => state.regionName);
 
-  const { refetch } = useQuery<
-    ReadPlaceDetailResponse,
-    Error,
-    ReadPlaceDetailResponse,
-    string[]
-  >({
-    queryKey: ["readPlaceDetail", placeId],
-    queryFn: () => readPlaceDetail({ placeId }),
-    staleTime: 60 * 60 * 1000, // 1시간 동안 fresh 상태로 유지
-    gcTime: 2 * 60 * 60 * 1000, // 2시간 동안 캐시 유지 (garbage collection 대상 제외)
-    refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
-    enabled: false,
-    retry: 2,
-  });
+  const { refetch } = useReadPlaceDetail(placeId);
 
   const handleOpenModal = async () => {
     const { data } = await refetch();
     if (!data) return;
     if (isLogin && countryName && regionName)
-      saveRecentPlace({
-        countryName,
-        regionName,
-        placeId: data.placeId,
-        placeName: data.name,
-        photoUrl: data.photoUrl,
-      });
+      saveRecentPlaceId(data.placeId, countryName, regionName);
 
     openModal(
       <PlaceModal

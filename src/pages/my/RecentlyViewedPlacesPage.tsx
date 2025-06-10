@@ -1,13 +1,13 @@
 import RecentlyViewSection from "../../components/section/RecentlyViewSection";
-import { getRecentPlaces } from "../../utils/getRecentPlace";
+import useReadRecentPlace from "../../hooks/useReadRecentPlace";
 
 const RecentlyViewedPlacesPage = () => {
-  const recentPlaces = getRecentPlaces();
+  const { data: recentPlaces } = useReadRecentPlace();
 
   return (
     <div className="px-[100px] py-[10px] flex flex-col gap-[5px]">
       <RecentlyViewSection
-        recentPlaces={recentPlaces}
+        recentPlaces={recentPlaces ?? []}
         showMyPageLink
         linkToMyPage="/my"
       />

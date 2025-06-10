@@ -7,8 +7,8 @@ export type Place = PlaceId & {
   placeType?: string;
   photoUrl?: string | null;
   address: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
 };
 
 export type CountryAndRegion = {
@@ -28,13 +28,13 @@ export type ReadPlaceListRequestType = CountryAndRegion & {
   pageToken: string | null;
 };
 
-export type CookieSavePlace = CountryAndRegion & Places;
-
 export type Places = PlaceId & {
   placeName: string;
   placeType?: string;
   photoUrl?: string | null;
 };
+
+export type RecentPlace = CountryAndRegion & Places;
 
 export type ReadPlaceListResponse = {
   places: Places[];
@@ -44,8 +44,8 @@ export type ReadPlaceListResponse = {
 export type ReadPlaceDetailResponse = PlaceId & {
   name: string;
   address: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
   summary?: string;
   openingHours?: {
     weekdayText?: string[];
