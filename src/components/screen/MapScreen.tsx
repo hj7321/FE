@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react";
+import { useMapStore } from "../../stores/map.store";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_KEY;
 
 const MapScreen = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(
+    null
+  );
+  const { center, placeName } = useMapStore();
 
   useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY) {
-      console.error("Google Maps API 키가 없습니다.");
-      return;
-    }
-
-    if (!window.google?.maps) {
+    const loadGoogleMapsScript = () => {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=marker`;
       script.async = true;
@@ -24,38 +25,64 @@ const MapScreen = () => {
       script.onerror = () => {
         console.error("Google Maps 스크립트 로딩 실패");
       };
-    } else {
-      initMap();
-    }
+    };
 
-    function initMap() {
-      if (!mapRef.current || !window.google?.maps) return; // null 체크
+    const initMap = async () => {
+      if (!mapRef.current || !window.google?.maps) return;
 
-      const map = new window.google.maps.Map(mapRef.current, {
-        center: { lat: 41.9009, lng: 12.4833 },
+      const { Map } = (await window.google.maps.importLibrary(
+        "maps"
+      )) as google.maps.MapsLibrary;
+      const { AdvancedMarkerElement } = (await window.google.maps.importLibrary(
+        "marker"
+      )) as google.maps.MarkerLibrary;
+
+      const map = new Map(mapRef.current, {
+        center,
         zoom: 16,
         mapId: "ffe46695a68d358762e0960f",
       });
 
-      if (window.google.maps.marker?.AdvancedMarkerElement) {
-        new window.google.maps.marker.AdvancedMarkerElement({
-          map,
-          position: { lat: 41.9009, lng: 12.4833 },
-          title: "트레비 분수",
-        });
-      } else {
-        new window.google.maps.Marker({
-          map,
-          position: { lat: 41.9009, lng: 12.4833 },
-          title: "트레비 분수",
-        });
-      }
+      mapInstanceRef.current = map;
+
+      // 고급 마커 생성
+      markerRef.current = new AdvancedMarkerElement({
+        map,
+        position: center,
+        title: placeName || "선택된 장소",
+      });
+    };
+
+    if (!GOOGLE_MAPS_API_KEY) {
+      console.error("Google Maps API 키가 없습니다.");
+      return;
     }
 
-    return () => {
-      // 필요시 스크립트 정리
-    };
+    if (!window.google?.maps) {
+      loadGoogleMapsScript();
+    } else {
+      initMap();
+    }
   }, []);
+
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const marker = markerRef.current;
+
+    if (map) {
+      map.setCenter(center);
+    }
+
+    if (marker) {
+      marker.position = center;
+    } else if (map && window.google?.maps.marker?.AdvancedMarkerElement) {
+      markerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
+        map,
+        position: center,
+        title: placeName || "선택된 장소",
+      });
+    }
+  }, [center]);
 
   return <div ref={mapRef} className="h-[100vh] w-[100vw]" />;
 };
