@@ -82,7 +82,7 @@ const LoginForm = () => {
       const { accessToken } = event.data || {};
       if (accessToken) {
         console.log("🔐 토큰 수신:", accessToken);
-        login(accessToken);
+        login(`Bearer ${accessToken}`);
         navigate("/");
       }
     };
