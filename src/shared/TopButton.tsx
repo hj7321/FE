@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { useAuthStore } from "../stores/auth.store";
 
 interface TopButtonProps {
   isExistedLikeButton: boolean;
@@ -7,6 +8,8 @@ interface TopButtonProps {
 
 const TopButton = ({ isExistedLikeButton }: TopButtonProps) => {
   const [showButton, setShowButton] = useState<boolean>(false);
+
+  const isLogin = useAuthStore((state) => state.isLogin);
 
   useEffect(() => {
     // 스크롤 위치에 따라 탑버튼 표시 여부를 결정하는 함수
@@ -34,7 +37,7 @@ const TopButton = ({ isExistedLikeButton }: TopButtonProps) => {
       className={clsx(
         showButton ? "flex" : "hidden",
         "fixed right-[10px]",
-        isExistedLikeButton ? "bottom-[150px]" : "bottom-[80px]"
+        isExistedLikeButton && isLogin ? "bottom-[150px]" : "bottom-[80px]"
       )}
       onClick={ScrollToTop}
     >
