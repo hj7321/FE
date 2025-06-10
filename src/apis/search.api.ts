@@ -1,6 +1,39 @@
 import axios from "axios";
-import { SearchResult, TextSearch, TypeSearch } from "../types/search.type";
+import {
+  Search,
+  SearchResult,
+  TextSearch,
+  TypeSearch,
+} from "../types/search.type";
 import { api } from "./api";
+
+// 여행 계획 페이지에서 주변 검색
+export const searchNearby = async ({
+  latitude,
+  longitude,
+  pageToken,
+}: Search): Promise<SearchResult> => {
+  const path = "/search/nearbySearch";
+
+  try {
+    const response = await api.get(path, {
+      params: {
+        latitude,
+        longitude,
+        pageToken,
+      },
+    });
+    const data = response.data;
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("[searchNearby] Axios 에러: ", error);
+    } else {
+      console.error("[searchNearby] 일반 에러: ", error);
+    }
+    throw error;
+  }
+};
 
 // 여행 계획 페이지에서 텍스트 검색
 export const searchText = async ({
