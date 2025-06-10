@@ -1,3 +1,4 @@
+import { TravelPlanButton } from "./button.type";
 import { Place } from "./place.type";
 
 export type Search = {
@@ -11,7 +12,7 @@ export type TextSearch = Search & {
 };
 
 export type TypeSearch = Search & {
-  type: "관광" | "맛집" | "숙소";
+  type: TravelPlanButton;
 };
 
 export type SearchResult = {
