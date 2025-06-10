@@ -16,6 +16,7 @@ import {
 } from "../../types/auth.type";
 import { formatTime } from "../../utils/formatTime";
 import { useNavigate } from "react-router";
+import { Notify, Report } from "notiflix";
 
 const style_active = "bg-common hover:cursor-pointer hover:bg-selected";
 const style_inactive = "bg-[#C895E6] opacity-25";
@@ -75,7 +76,12 @@ const SignupForm = () => {
     },
     onSuccess: (response) => {
       console.log("✅ 인증번호 발송 성공", response);
-      alert("인증번호가 발송되었습니다. 이메일을 확인해주세요.");
+      // alert("인증번호가 발송되었습니다. 이메일을 확인해주세요.");
+      Report.success(
+        "Tranner",
+        "인증번호가 발송되었습니다. 이메일을 확인해주세요.",
+        "확인"
+      );
       setIsValidForm((prev) => ({ ...prev, email: true }));
       setTimeLeft(300); // 5분 (300초)
       setIsTimerRunning(true);
@@ -105,7 +111,8 @@ const SignupForm = () => {
     },
     onSuccess: (response) => {
       console.log("✅ 인증번호 일치", response);
-      alert("인증 완료!");
+      // alert("인증 완료!");
+      Notify.success("인증 완료!");
       setTimeLeft(0);
       setIsTimerRunning(false);
       setIsValidForm((prev) => ({ ...prev, emailCode: true }));
@@ -142,7 +149,8 @@ const SignupForm = () => {
     },
     onSuccess: (response) => {
       console.log("✅ 회원가입 완료", response);
-      alert("회원가입이 완료되었습니다.");
+      // alert("회원가입이 완료되었습니다.");
+      Report.success("Tranner", "회원가입이 완료되었습니다.", "확인");
       navigate("/");
     },
     onError: (err) => {
@@ -202,7 +210,12 @@ const SignupForm = () => {
     )
       return;
     if (!emailRegexp.test(form.email)) {
-      alert("올바른 이메일 주소 형식으로 입력해주세요. 예: user@example.com");
+      // alert("올바른 이메일 주소 형식으로 입력해주세요. 예: user@example.com");
+      Report.failure(
+        "Tranner",
+        "올바른 이메일 주소 형식으로 입력해주세요. 예: user@example.com",
+        "확인"
+      );
       focusInput("email");
       return;
     }
@@ -223,11 +236,13 @@ const SignupForm = () => {
     const { data: isDuplicate, error } = await checkIdRefetch();
 
     if (isDuplicate) {
-      alert("이미 존재하는 아이디입니다.");
+      // alert("이미 존재하는 아이디입니다.");
+      Notify.failure("이미 존재하는 아이디입니다.");
       form.id = "";
       focusInput("id");
     } else {
-      alert("사용 가능한 아이디입니다.");
+      // alert("사용 가능한 아이디입니다.");
+      Notify.success("사용 가능한 아이디입니다.");
       setIsValidForm((prev) => ({ ...prev, id: true }));
       focusInput("pw");
     }

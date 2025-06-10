@@ -4,6 +4,7 @@ import TimeInfo from "./TimeInfo";
 import Timeline from "./Timeline";
 import ScheduleCard from "../card/ScheduleCard";
 import { MiniSchedule } from "../../types/travelPlan.type";
+import { Notify } from "notiflix";
 
 interface ScheduleUnitProps {
   dayNum: number;
@@ -30,7 +31,8 @@ const ScheduleUnit = ({
     accept: "PLACE_CARD",
     drop: (item: { placeName: string; placeType: string }) => {
       onDropPlace?.(time, item.placeName, item.placeType);
-      alert(`${item.placeName}를 ${time}에 추가했습니다!`);
+      // alert(`${item.placeName}를 ${time}에 추가했습니다!`);
+      Notify.success(`${item.placeName}를 ${time}에 추가했습니다!`);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver({ shallow: true }),
@@ -58,13 +60,13 @@ const ScheduleUnit = ({
       <div className="flex gap-[10px]">
         <Timeline dayNum={dayNum} numOfCard={numOfCard} />
         {schedule[time] &&
-          schedule[time].map((_, idx) => (
+          schedule[time].map((item, idx) => (
             <ScheduleCard
               key={idx}
               isFirstSchedule
-              placeName="트레비 분수"
-              placeType="관광"
-              period="09:00 ~ 09:45"
+              placeName={item.placeName}
+              placeType={item.placeType}
+              period={item.period}
               isNeededDeleteButton
             />
           ))}
