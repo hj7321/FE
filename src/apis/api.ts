@@ -41,7 +41,9 @@ api.interceptors.request.use(
     config.headers = config.headers || {};
 
     if (token && !isPublicRoute) {
-      config.headers.Authorization = token;
+      config.headers.Authorization = token.startsWith("Bearer ")
+        ? token
+        : `Bearer ${token}`;
       console.log("✅ 요청에 토큰 붙임:", config.headers.Authorization);
     }
 
