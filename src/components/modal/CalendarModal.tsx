@@ -45,8 +45,9 @@ const CalendarModal = () => {
 
   const handleCompleteTravelPeriod = () => {
     if (!startDate || !endDate) {
-      // alert("여행 기간을 선택해주세요.");
-      Notify.failure("여행 기간을 선택해주세요.");
+      Notify.failure("여행 기간을 선택해주세요.", {
+        fontFamily: "SUIT-Regular",
+      });
       return;
     }
     setDates(startDate, endDate);
