@@ -13,6 +13,7 @@ interface TravelPlaceCardProps {
   placeId: string;
   placeType: string | undefined;
   isFavorite?: boolean;
+  isDragPreview?: boolean;
 }
 
 const TravelPlaceCard = memo(
@@ -22,6 +23,7 @@ const TravelPlaceCard = memo(
     placeId,
     placeType,
     isFavorite = false,
+    isDragPreview = false,
   }: TravelPlaceCardProps) => {
     const openModal = useModalStore((state) => state.openModal);
 
@@ -36,7 +38,14 @@ const TravelPlaceCard = memo(
     // - collect: 현재 드래그 상태를 수집해서 반환하는 함수
     const [{ isDragging }, drag, preview] = useDrag({
       type: "PLACE_CARD", // 이 드래그 아이템의 타입. Drop 쪽에서도 같은 타입을 사용해야 드롭 가능
-      item: { cardName, cardImg, isFavorite }, // 드래그 시 전달될 데이터. Drop 함수에서 이 데이터를 사용할 수 있음
+      item: {
+        cardName,
+        placeName: cardName,
+        cardImg,
+        isFavorite,
+        placeId,
+        placeType,
+      }, // 드래그 시 전달될 데이터. Drop 함수에서 이 데이터를 사용할 수 있음
       collect: (monitor) => ({
         isDragging: monitor.isDragging(), // 현재 드래그 중인지 여부를 수집 (스타일 변경 등에 사용)
       }),
@@ -51,6 +60,7 @@ const TravelPlaceCard = memo(
     drag(ref); // 연결
 
     const handleOpenModal = async () => {
+      if (isDragPreview) return;
       const { data } = await refetch();
       if (!data) return;
 

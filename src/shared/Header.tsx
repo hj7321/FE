@@ -20,9 +20,6 @@ const Header = () => {
   const { insertBasketDataMutateAsync, deleteBasketDataMutateAsync } =
     useBasketMutations(countryName!, regionName!);
 
-  console.log("addList: ", addList);
-  console.log("deleteList: ", deleteList);
-
   const handleLogout = async () => {
     if (countryName && regionName) {
       if (addList.length > 0) {

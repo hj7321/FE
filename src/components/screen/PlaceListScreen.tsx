@@ -36,7 +36,6 @@ const PlaceListScreen = () => {
   const { lat, lng } = useMapStore((state) => state.center);
 
   const basketPlaces = useReadBasket(countryName!, regionName!);
-  console.log("basketPlaces: ", basketPlaces);
 
   const address = basketPlaces?.[0]?.address;
   const { data: location } = useLatLng(address ?? "");
@@ -48,7 +47,6 @@ const PlaceListScreen = () => {
   } = useSearchNearby(location?.lat ?? 0, location?.lng ?? 0, {
     enabled: nearbyRequested,
   });
-  console.log("nearbyPlaces: ", nearbyPlaces);
 
   const {
     data: textPlaces,
@@ -58,7 +56,6 @@ const PlaceListScreen = () => {
   } = useSearchText(textSearchValue, lat, lng, {
     enabled: isSearchButtonClicked && lat !== 0 && lng !== 0,
   });
-  console.log("textPlaces: ", textPlaces);
 
   const {
     data: typePlaces,
@@ -68,7 +65,6 @@ const PlaceListScreen = () => {
   } = useSearchType(clickedButton, lat, lng, {
     enabled: clickedButton !== "전체보기" && lat !== 0 && lng !== 0,
   });
-  console.log("typePlaces: ", typePlaces);
 
   const handleSearchText = () => {
     const keyword = textSearchInputRef.current?.value.trim() ?? "";
@@ -177,7 +173,7 @@ const PlaceListScreen = () => {
 
   return (
     <div className="bg-white h-screen flex flex-col">
-      <div className="w-full h-fit px-[20px] py-[12px] flex flex-col gap-[8px]">
+      <div className="w-full px-[20px] py-[12px] flex flex-col gap-[8px]">
         <div className="flex justify-between w-full rounded-[6px] bg-[#f2f2f2] py-[10px] px-[15px]">
           <input
             type="text"
@@ -206,7 +202,7 @@ const PlaceListScreen = () => {
         </div>
       </div>
       <div className="pr-[15px]">
-        <div className="flex flex-wrap w-[370px] h-[596px] pb-[15px] pl-[20px] pr-[15px] justify-between gap-y-[15px] bg-white overflow-y-auto scrollbar-custom">
+        <div className="flex flex-wrap w-[370px] h-[calc(100vh-100px)] pb-[15px] pl-[20px] pr-[15px] justify-between gap-y-[15px] overflow-y-auto scrollbar-custom">
           {placesToRender.map((place) => (
             <TravelPlaceCard
               key={place.placeId}

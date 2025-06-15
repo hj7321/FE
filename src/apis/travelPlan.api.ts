@@ -54,7 +54,7 @@ export const createTravelPlan = async (schedule: CreateTravelSchedule) => {
   const path = "/account/plan/save";
 
   try {
-    const response = await api.post(path, { schedule });
+    const response = await api.post(path, schedule);
     return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -71,7 +71,7 @@ export const modifyTravelPlan = async (schedule: UpdateTravelSchedule) => {
   const path = "/account/plan/modify";
 
   try {
-    const response = await api.post(path, { schedule });
+    const response = await api.post(path, schedule);
     return response;
   } catch (error) {
     if (axios.isAxiosError(error)) {

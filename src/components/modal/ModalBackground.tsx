@@ -14,7 +14,7 @@ const ModalBackground = () => {
       onClick={() => {
         if (isClosable) closeModal();
       }}
-      className="fixed inset-0 z-50 flex justify-center items-center bg-black/50"
+      className="fixed inset-0 z-[9999] flex justify-center items-center bg-black/50"
     >
       {modalContent}
     </div>

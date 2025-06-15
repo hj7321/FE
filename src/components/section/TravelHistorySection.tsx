@@ -3,6 +3,7 @@ import { Schedule } from "../../types/travelPlan.type";
 import { Link } from "react-router";
 import clsx from "clsx";
 import TravelPlanCard from "../card/TravelPlanCard";
+import NoData from "../NoData";
 
 interface TravelHistorySectionProps {
   allPlans: Schedule[];
@@ -39,7 +40,7 @@ const TravelHistorySection = ({
     : selectedPlans;
 
   return (
-    <section className="flex flex-col gap-[5px] mb-[30px]">
+    <section className="flex flex-col gap-[5px] mb-[30px] min-h-[300px]">
       <div className="flex justify-between items-end">
         <div className="flex items-center gap-[7px]">
           {showMyPageLink && (
@@ -77,9 +78,11 @@ const TravelHistorySection = ({
         ))}
       </div>
       <div className="mt-[7px] flex flex-wrap gap-x-[20px] gap-y-[15px]">
+        {displayedPlans.length === 0 && <NoData />}
         {displayedPlans.map((plan) => (
           <TravelPlanCard
             key={plan.scheduleId}
+            cardId={plan.scheduleId}
             cardImg={`/images/cities/${plan.regionName}.webp`}
             travelTitle={plan.scheduleName}
             travelStartDate={plan.startDate}
@@ -89,15 +92,6 @@ const TravelHistorySection = ({
             isEnded={clickedContent === "지난 여행"}
           />
         ))}
-        <TravelPlanCard
-          cardImg="/images/cities/로마.webp"
-          travelTitle="황금연휴에 가는 해외여행😊"
-          travelStartDate="2025.05.01"
-          travelEndDate="2025.05.07"
-          travelPeople={8}
-          travelPlace="이탈리아 로마"
-          isEnded={false}
-        />
       </div>
     </section>
   );

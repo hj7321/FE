@@ -1,44 +1,39 @@
 export const CITY_TO_SKYSCANNER_CODE: { [cityName: string]: string } = {
   // 대한민국
-  서울: "sela",
-  부산: "pus",
-  제주: "cju",
-  경주: "usna",
-  강릉: "ynya",
-  전주: "kuwa",
-  수원: "gmpa",
+  부산: "PUS",
+  제주: "CJU",
 
   // 일본
-  오사카: "osa",
-  도쿄: "tyoa",
-  후쿠오카: "fuk",
-  삿포로: "spka",
+  오사카: "OSA",
+  도쿄: "TYO",
+  후쿠오카: "FUK",
+  삿포로: "SPK",
 
   // 중국
-  베이징: "bjsa",
-  상하이: "csha",
+  베이징: "BJS",
+  상하이: "SHA",
 
   // 태국
-  방콕: "bkkt",
-  치앙마이: "cnx",
-  코사무이: "usm",
+  방콕: "BKK",
+  치앙마이: "CNX",
+  코사무이: "USM",
 
   // 미국
-  뉴욕: "nyca",
-  하와이: "hnl",
-  괌: "gum",
-  로스앤젤레스: "laxa",
-  샌프란시스코: "sfo",
-  사이판: "spn",
+  뉴욕: "NYC",
+  하와이: "HNL",
+  괌: "GUM",
+  로스앤젤레스: "LAX",
+  샌프란시스코: "SFO",
+  사이판: "SPN",
 
   // 이탈리아
-  로마: "rome",
-  피렌체: "flr",
-  베네치아: "veni",
-  밀라노: "mila",
-  나폴리: "nap",
+  로마: "ROM",
+  피렌체: "FLR",
+  베네치아: "VCE",
+  밀라노: "MIL",
+  나폴리: "NAP",
 
   // 스페인
-  바르셀로나: "bcn",
-  마드리드: "mad",
+  바르셀로나: "BCN",
+  마드리드: "MAD",
 };

@@ -3,6 +3,8 @@ import CityBasicInfo from "../information/basicInfo/CityBasicInfo";
 import CityInfo from "../information/CityInfo";
 import { useModalStore } from "../../stores/modal.store";
 import { CITY_TO_SKYSCANNER_CODE } from "../../constants/cityCodes";
+import clsx from "clsx";
+import { convertDateToISO } from "../../utils/convertDateForm";
 
 interface CityModalProps {
   cardName: string;
@@ -12,6 +14,11 @@ interface CityModalProps {
 const CityModal = ({ cardName, cardImg }: CityModalProps) => {
   const closeModal = useModalStore((state) => state.closeModal);
   const navigate = useNavigate();
+  const today = new Date();
+  const after20Days = new Date();
+  after20Days.setDate(today.getDate() + 20);
+  const departDate = convertDateToISO(today);
+  const returnDate = convertDateToISO(after20Days);
 
   const city = cardName.split(" ")[1];
 
@@ -19,9 +26,8 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
     cardName
   )}`;
 
-  const from = CITY_TO_SKYSCANNER_CODE["서울"];
-  const to = CITY_TO_SKYSCANNER_CODE[city];
-  const airlineTicketBookingURL = `https://www.skyscanner.co.kr/transport/flights/${from}/${to}`;
+  const arrivalCity = CITY_TO_SKYSCANNER_CODE[city] ?? "";
+  const airlineTicketBookingURL = `https://www.kayak.co.kr/flights/SEL-${arrivalCity}/${departDate}/${returnDate}?ucs=120yi60&sort=bestflight_a`;
 
   const handleDecideTravelArea = () => {
     closeModal();
@@ -51,12 +57,15 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
           alt={cardName}
           className="text-[14px] h-[400px] w-full object-cover"
         />
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-[10px]">
           <a
             href={accommodationBookingURL}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-1/5 rounded-[4px] flex justify-center items-center gap-[5px] tsext-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+            className={clsx(
+              arrivalCity === "" ? "w-1/2" : "w-1/4",
+              "rounded-[4px] flex justify-center items-center gap-[5px] tsext-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+            )}
           >
             <img
               src="/images/accommodation.svg"
@@ -65,19 +74,21 @@ const CityModal = ({ cardName, cardImg }: CityModalProps) => {
             />
             <p>숙소</p>
           </a>
-          <a
-            href={airlineTicketBookingURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-1/4 rounded-[4px] flex justify-center items-center gap-[5px] text-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
-          >
-            <img
-              src="/images/plane-ticket.svg"
-              alt="plane-ticket"
-              className="h-[20px] w-[25px]"
-            />
-            <p>항공권</p>
-          </a>
+          {arrivalCity !== "" && (
+            <a
+              href={airlineTicketBookingURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-1/4 rounded-[4px] flex justify-center items-center gap-[5px] text-black bg-[#efefef] text-[13px] py-[10px] px-[15px] hover:cursor-pointer hover:bg-[#dddddd]"
+            >
+              <img
+                src="/images/plane-ticket.svg"
+                alt="plane-ticket"
+                className="h-[20px] w-[25px]"
+              />
+              <p>항공권</p>
+            </a>
+          )}
           <button
             onClick={handleDecideTravelArea}
             className="w-1/2 text-center rounded-[4px] text-white bg-common py-[10px] px-[15px] text-[14px] hover:bg-selected hover:cursor-pointer"

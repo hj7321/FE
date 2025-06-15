@@ -49,8 +49,6 @@ const Layout = () => {
       !isPlacePage &&
       !currentPath.startsWith("/travel-plan")
     ) {
-      console.log("🧹 /place-exploration에서 벗어남 → API 요청");
-
       if (addList.length > 0 && countryName && regionName) {
         insertBasketDataMutate({
           countryName,

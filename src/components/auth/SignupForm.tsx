@@ -80,7 +80,10 @@ const SignupForm = () => {
       Report.success(
         "Tranner",
         "인증번호가 발송되었습니다. 이메일을 확인해주세요.",
-        "확인"
+        "확인",
+        {
+          fontFamily: "SUIT-Regular",
+        }
       );
       setIsValidForm((prev) => ({ ...prev, email: true }));
       setTimeLeft(300); // 5분 (300초)
@@ -112,7 +115,7 @@ const SignupForm = () => {
     onSuccess: (response) => {
       console.log("✅ 인증번호 일치", response);
       // alert("인증 완료!");
-      Notify.success("인증 완료!");
+      Notify.success("인증 완료!", { fontFamily: "SUIT-Regular" });
       setTimeLeft(0);
       setIsTimerRunning(false);
       setIsValidForm((prev) => ({ ...prev, emailCode: true }));
@@ -150,7 +153,9 @@ const SignupForm = () => {
     onSuccess: (response) => {
       console.log("✅ 회원가입 완료", response);
       // alert("회원가입이 완료되었습니다.");
-      Report.success("Tranner", "회원가입이 완료되었습니다.", "확인");
+      Report.success("Tranner", "회원가입이 완료되었습니다.", "확인", {
+        fontFamily: "SUIT-Regular",
+      });
       navigate("/");
     },
     onError: (err) => {
@@ -214,7 +219,10 @@ const SignupForm = () => {
       Report.failure(
         "Tranner",
         "올바른 이메일 주소 형식으로 입력해주세요. 예: user@example.com",
-        "확인"
+        "확인",
+        {
+          fontFamily: "SUIT-Regular",
+        }
       );
       focusInput("email");
       return;
@@ -237,12 +245,16 @@ const SignupForm = () => {
 
     if (isDuplicate) {
       // alert("이미 존재하는 아이디입니다.");
-      Notify.failure("이미 존재하는 아이디입니다.");
+      Notify.failure("이미 존재하는 아이디입니다.", {
+        fontFamily: "SUIT-Regular",
+      });
       form.id = "";
       focusInput("id");
     } else {
       // alert("사용 가능한 아이디입니다.");
-      Notify.success("사용 가능한 아이디입니다.");
+      Notify.success("사용 가능한 아이디입니다.", {
+        fontFamily: "SUIT-Regular",
+      });
       setIsValidForm((prev) => ({ ...prev, id: true }));
       focusInput("pw");
     }
