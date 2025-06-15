@@ -30,7 +30,7 @@ const TravelPlanPage = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [travelStartDate, travelEndDate, openModal]);
 
   return (
     <DndProvider backend={HTML5Backend}>
