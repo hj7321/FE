@@ -1,40 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDateStore } from "../../stores/date.store";
 import { getDateMap } from "../../utils/formatDateRange";
 import DayCard from "../card/DayCard";
 import ChangeDateOverlay from "../overlay/ChangeDateOverlay";
 import ScheduleUnit from "../schedule/ScheduleUnit";
 import { useDragDropManager } from "react-dnd";
-import { MiniSchedule } from "../../types/travelPlan.type";
-
-const timeline = [
-  "07 : 00",
-  "08 : 00",
-  "09 : 00",
-  "10 : 00",
-  "11 : 00",
-  "12 : 00",
-  "13 : 00",
-  "14 : 00",
-  "15 : 00",
-  "16 : 00",
-  "17 : 00",
-  "18 : 00",
-  "19 : 00",
-  "20 : 00",
-  "21 : 00",
-  "22 : 00",
-];
+import { useScheduleStore } from "../../stores/schedule.store";
+import { useMutation } from "@tanstack/react-query";
+import { createTravelPlan } from "../../apis/travelPlan.api";
+import { Confirm, Notify, Report } from "notiflix";
+import { useFavoriteListStore } from "../../stores/favoriteList.store";
+import { TIMELINE } from "../../constants/timeline";
+import { useNavigate } from "react-router";
 
 const ScheduleScreen = () => {
+  const uniqueId = uuidv4();
   const [titleInput, setTitleInput] = useState<string>("여행 1");
   const [peopleInput, setPeopleInput] = useState<string>("1");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  console.log(selectedDate);
   const [dayNum, setDayNum] = useState<number>(1);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [highlightedTime, setHighlightedTime] = useState<string | null>(null);
-  const [schedule, setSchedule] = useState<MiniSchedule>({});
   const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  const countryName = useFavoriteListStore((state) => state.countryName);
+  const regionName = useFavoriteListStore((state) => state.regionName);
 
   const travelStartDate = useDateStore((state) => state.travelStartDate);
   const travelEndDate = useDateStore((state) => state.travelEndDate);
@@ -43,7 +35,43 @@ const ScheduleScreen = () => {
     new Date(travelEndDate!)
   );
 
-  console.log(selectedDate);
+  const rawSchedule = useScheduleStore((state) => state.schedule[dayNum]);
+  const schedule = useMemo(() => rawSchedule ?? {}, [rawSchedule]);
+  const addPlaceToSchedule = useScheduleStore(
+    (state) => state.addPlaceToSchedule
+  );
+
+  const navigate = useNavigate();
+
+  const { mutate: createTravelPlanMutate } = useMutation({
+    mutationKey: ["createTravelPlan", uniqueId],
+    mutationFn: createTravelPlan,
+    onSuccess: (response) => {
+      console.log("✅ 여행 생성 성공", response);
+      Confirm.show(
+        "Tranner",
+        `<b>${countryName} ${regionName}</b>으로 떠나는 <b>${titleInput}</b>이 생성되었습니다.`,
+        "홈으로 이동",
+        "마이페이지로 이동",
+        () => {
+          navigate("/");
+        },
+        () => {
+          navigate("/my");
+        },
+        {
+          width: "400px",
+          borderRadius: "10px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+        }
+      );
+    },
+    onError: (err) => {
+      console.error("❌ 여행 생성 실패", err);
+    },
+    retry: 1,
+  });
 
   const handleChangeSelectedDate = (newDayNum: number) => {
     setDayNum(newDayNum);
@@ -95,15 +123,109 @@ const ScheduleScreen = () => {
   const handleDropPlace = (
     time: string,
     placeName: string,
-    placeType: string
+    placeType: string,
+    placeId: string,
+    address: string,
+    latitude: number,
+    longitude: number
   ) => {
-    setSchedule((prev) => ({
-      ...prev,
-      [time]: [
-        ...(prev[time] || []),
-        { placeName, placeType, period: "09:00 ~ 09:45" }, // period는 예시
-      ],
-    }));
+    // time이 "10:00"이라면, period를 "10:00 ~ 11:00"으로 설정
+    const [startHour] = time.split(" : ");
+    const start = `${startHour.padStart(2, "0")}:00`;
+    const end = `${(parseInt(startHour, 10) + 1)
+      .toString()
+      .padStart(2, "0")}:00`;
+
+    // dayNum(현재 날짜 인덱스)와 시간, 장소 정보로 추가
+    addPlaceToSchedule(dayNum, time, {
+      placeName,
+      placeType,
+      period: `${start} ~ ${end}`,
+      placeId,
+      address,
+      latitude,
+      longitude,
+    });
+  };
+
+  const handleCreateTravelPlan = () => {
+    const schedule = useScheduleStore.getState().schedule;
+    const travelPeriod = getDateMap(
+      new Date(travelStartDate!),
+      new Date(travelEndDate!)
+    );
+    const dayCount = Object.keys(travelPeriod).length;
+
+    // 1. 일정 없는 날짜 검사
+    for (let dayNum = 1; dayNum <= dayCount; dayNum++) {
+      const daySchedule = schedule[dayNum];
+      if (!daySchedule || Object.keys(daySchedule).length === 0) {
+        Notify.failure("모든 여행 기간에 일정을 하나 이상 넣어주세요.", {
+          position: "left-top",
+          fontFamily: "SUIT-Regular",
+          width: "310px",
+        });
+        return;
+      }
+    }
+
+    // 2. 날짜 변환
+    const startDateStr = travelStartDate
+      ? new Date(travelStartDate).toISOString().slice(0, 10)
+      : "";
+    const endDateStr = travelEndDate
+      ? new Date(travelEndDate).toISOString().slice(0, 10)
+      : "";
+
+    // 3. requestBody 생성 (countryName, regionName 등 실제 값 사용)
+    const requestBody = {
+      scheduleName: titleInput,
+      startDate: startDateStr,
+      endDate: endDateStr,
+      howManyPeople: Number(peopleInput),
+      countryName: countryName!,
+      regionName: regionName!,
+      detailSchedule: Object.entries(travelPeriod).map(([dayNumStr, _]) => {
+        const dayNum = Number(dayNumStr);
+        const daySchedule = schedule[dayNum];
+        const scheduleByDay = Object.entries(daySchedule)
+          .flatMap(([_, places]) =>
+            places.map((place) => ({
+              locationSeq: places.indexOf(place) + 1,
+              startTime: place.period.split(" ~ ")[0],
+              endTime: place.period.split(" ~ ")[1],
+              placeName: place.placeName,
+              placeType: place.placeType,
+              placeId: place.placeId ?? "임시값",
+              address: place.address ?? "주소 미정",
+              latitude: place.latitude ?? 0,
+              longitude: place.longitude ?? 0,
+            }))
+          )
+          .filter(Boolean);
+        return { daySeq: dayNum, scheduleByDay };
+      }),
+    };
+
+    // 4. 여행 생성 요청
+    createTravelPlanMutate(requestBody, {
+      onSuccess: () => {
+        Report.success(
+          "Tranner",
+          `${requestBody.regionName}으로 떠나는 ${requestBody.scheduleName}이 생성되었습니다.`,
+          "홈으로 이동",
+          {
+            fontFamily: "SUIT-Regular",
+          }
+        );
+      },
+      onError: () => {
+        Notify.failure("여행 생성 실패", {
+          position: "left-top",
+          fontFamily: "SUIT-Regular",
+        });
+      },
+    });
   };
 
   useEffect(() => {
@@ -126,13 +248,19 @@ const ScheduleScreen = () => {
   return (
     <div className="bg-white h-screen flex flex-col border-r border-[#EDEDED] w-[290px]">
       <div className="px-[15px] py-[12px]">
-        <div className="text-[24px] font-bold">
+        <div className="flex justify-between items-center">
           <input
-            className="outline-none w-[260px]"
+            className="outline-none w-[160px] text-[24px] font-bold"
             type="text"
             value={titleInput}
             onChange={(e) => setTitleInput(e.target.value)}
           />
+          <button
+            onClick={handleCreateTravelPlan}
+            className="text-white bg-common rounded-[4px] text-[12px] hover:cursor-pointer hover:bg-selected px-[9px] py-[6.5px]"
+          >
+            여행 생성하기
+          </button>
         </div>
         <div className="text-[14px] text-[#939393] mt-[-3px] mb-[2px]">
           여행 인원수:
@@ -194,17 +322,18 @@ const ScheduleScreen = () => {
         </div>
       </div>
       <div className="px-[15px] pt-[5px] py-[15px] overflow-y-auto scrollbar-custom w-[278px]">
-        {timeline.map((timeElement) => (
+        {TIMELINE.map((time) => (
           <ScheduleUnit
-            key={timeElement}
-            dayNum={1}
-            time={timeElement}
-            numOfCard={1}
-            isHighlighted={highlightedTime === timeElement}
+            key={time}
+            dayNum={dayNum}
+            time={time}
+            numOfCard={schedule[time]?.length || 1}
+            isHighlighted={highlightedTime === time}
             highlightedTime={highlightedTime}
             setHighlightedTime={setHighlightedTime}
             onDropPlace={handleDropPlace}
-            schedule={schedule}
+            schedule={schedule || {}}
+            isNeededDeleteButton
           />
         ))}
       </div>
