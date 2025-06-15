@@ -32,8 +32,8 @@ export type ScheduleByDay = {
   placeName: string;
   placeType?: string;
   address?: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
 };
 
 export type DetailSchedule = {
