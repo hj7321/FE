@@ -18,8 +18,6 @@ const PlaceExplorationPage = () => {
   const [searchResult, setSearchResult] = useState<string[]>([]);
   const [isComposing, setIsComposing] = useState<boolean>(false);
 
-  console.log(searchResult);
-
   const isLogin = useAuthStore((state) => state.isLogin);
   const setCountryName = useFavoriteListStore((state) => state.setCountryName);
   const setRegionName = useFavoriteListStore((state) => state.setRegionName);
@@ -29,7 +27,6 @@ const PlaceExplorationPage = () => {
   );
 
   const basketData = useReadBasket(countryName!, regionName!);
-  console.log("basketData: ", basketData);
 
   const {
     data: places,

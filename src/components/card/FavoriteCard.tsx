@@ -10,7 +10,6 @@ interface FavoriteCardProps {
 
 const FavoriteCard = memo(
   ({ cardImg, cardName, placeId, isNew }: FavoriteCardProps) => {
-    console.log("🖼️ 카드 이미지 확인:", cardImg);
     const deleteOldFavoriteList = useFavoriteListStore(
       (state) => state.deleteOldFavoriteList
     );

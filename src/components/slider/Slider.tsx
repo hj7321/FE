@@ -29,8 +29,6 @@ const Slider = ({ countryName, regionName }: SliderProps) => {
     refetchInterval: 10 * 60 * 1000, // 10분마다 자동 refetch (배경 refetch 포함)
   });
 
-  console.log(places);
-
   return (
     <>
       <div className="custom-prev absolute left-[60px] top-[100px] -translate-y-1/2 z-10 cursor-pointer">
