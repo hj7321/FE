@@ -26,13 +26,12 @@ const PlaceModal = ({
   );
   const updateAddList = useFavoriteListStore((state) => state.updateAddList);
 
-  console.log(placeData);
-
   const handleAddFavoriteList = () => {
     if (!isLogin) {
       // alert("로그인 후에 이용해주세요.");
       Report.failure("Tranner", "로그인 후에 이용해주세요.", "확인", {
         titleFontSize: "20px",
+        fontFamily: "SUIT-Regular",
       });
       return;
     }
