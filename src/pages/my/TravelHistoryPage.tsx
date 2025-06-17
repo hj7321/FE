@@ -4,7 +4,6 @@ import TravelHistorySection from "../../components/section/TravelHistorySection"
 const TravelHistoryPage = () => {
   const { data: { allPlans, scheduledPlans, pastPlans } = {} } =
     useReadTravelPlans();
-  console.log(allPlans);
 
   return (
     <div className="px-[100px] py-[10px] flex flex-col gap-[5px]">

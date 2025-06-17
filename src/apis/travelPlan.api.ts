@@ -113,7 +113,7 @@ export const deleteTravelPlan = async ({ id }: TravelPlanId) => {
 
   try {
     const response = await api.delete(path, {
-      data: { id },
+      params: { id },
     });
     return response;
   } catch (error) {

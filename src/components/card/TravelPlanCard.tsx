@@ -3,13 +3,17 @@ import TravelPlanModal from "../modal/TravelPlanModal";
 import { useModalStore } from "../../stores/modal.store";
 import { memo } from "react";
 import { Confirm, Notify } from "notiflix";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteTravelPlan,
   navigateModificaitonPage,
   readDetailTravelPlan,
 } from "../../apis/travelPlan.api";
 import { useNavigate } from "react-router";
+import { parseDetailSchedule } from "../../utils/parseDetailSchedult";
+import { useScheduleStore } from "../../stores/schedule.store";
+import { useDateStore } from "../../stores/date.store";
+import { useFavoriteListStore } from "../../stores/favoriteList.store";
 
 interface TravelPlanCardProps {
   cardId: number;
@@ -33,9 +37,15 @@ const TravelPlanCard = memo(
     travelPlace,
     isEnded,
   }: TravelPlanCardProps) => {
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     const openModal = useModalStore((state) => state.openModal);
+    const setDates = useDateStore((state) => state.setDates);
+    const setEditModeOn = useScheduleStore((state) => state.setEditModeOn);
+    const setMeta = useScheduleStore((state) => state.setMeta);
+    const setSchedule = useScheduleStore((state) => state.setSchedule);
+    const favStore = useFavoriteListStore.getState();
 
     const { mutate: deleteTravelPlanMutate } = useMutation({
       mutationKey: ["deleteTravelPlan", cardId],
@@ -44,13 +54,24 @@ const TravelPlanCard = memo(
         console.log("✅ 여행 계획 삭제 완료", response);
         Notify.success("여행 계획이 삭제되었습니다.", {
           fontFamily: "SUIT-Regular",
+          fontSize: "15px",
+          zindex: 9999,
+          timeout: 5000,
         });
+        queryClient.invalidateQueries({ queryKey: ["readTravelPlanList"] });
       },
       onError: (err) => {
         console.error("❌ 여행 계획 삭제 실패", err);
-        Notify.failure("여행 계획을 삭제하지 못했습니다.", {
-          fontFamily: "SUIT-Regular",
-        });
+        Notify.failure(
+          "여행 계획을 삭제하지 못했습니다.<br />잠시 후에 다시 이용해주세요.",
+          {
+            fontFamily: "SUIT-Regular",
+            fontSize: "15px",
+            plainText: false,
+            zindex: 9999,
+            timeout: 5000,
+          }
+        );
       },
       retry: 1,
     });
@@ -59,7 +80,7 @@ const TravelPlanCard = memo(
       queryKey: ["navigateModificaitonPage", cardId],
       queryFn: () => navigateModificaitonPage({ id: cardId }),
       enabled: false,
-    }); // 이거 여행 계획 페이지에서 호출 (수정 여부 확인해서)
+    });
 
     const { refetch: readDetailTravelPlanRefetch } = useQuery({
       queryKey: ["readDetailTravelPlan", cardId],
@@ -85,26 +106,78 @@ const TravelPlanCard = memo(
 
     const handleEditTravelPlan = async () => {
       const { data } = await refetch();
-      console.log(data); // 이 데이터를 전역상태에 넣어서
-      navigate("/travel-plan"); // 여행 계획 페이지로 이동
+      console.log(data);
+      if (!data) return;
+
+      const {
+        scheduleName,
+        startDate,
+        endDate,
+        howManyPeople,
+        countryName,
+        regionName,
+        detailSchedule,
+      } = data;
+      const schedule = parseDetailSchedule(detailSchedule);
+
+      setDates(new Date(startDate), new Date(endDate));
+      setMeta({
+        scheduleId: cardId,
+        scheduleName,
+        startDate,
+        endDate,
+        howManyPeople,
+        countryName,
+        regionName,
+      });
+
+      const firstDayKey = Math.min(...Object.keys(schedule).map(Number)); // 가장 빠른 daySeq
+      const firstDay = schedule[firstDayKey];
+      if (firstDay) {
+        const firstTimeKey = Object.keys(firstDay).sort()[0]; // 가장 이른 시간
+        const firstPlace = firstDay[firstTimeKey]?.[0];
+
+        if (firstPlace) {
+          favStore.resetAllList(); // 기존 장바구니 비우기
+          favStore.setCountryName(data.countryName);
+          favStore.setRegionName(data.regionName);
+          favStore.updateAddList({
+            placeId: firstPlace.placeId,
+            placeName: firstPlace.placeName,
+            placeType: firstPlace.placeType,
+            photoUrl: undefined,
+            address: firstPlace.address,
+            latitude: firstPlace.latitude,
+            longitude: firstPlace.longitude,
+          });
+        }
+      }
+      setSchedule(schedule);
+      setEditModeOn();
+      navigate("/travel-plan");
     };
 
     const handleDeleteTravelPlan = () => {
+      // 여행 제목 길이에 비례해 픽셀 수 계산
+      const baseWidth = 380; // 최소 너비(px)
+      const charUnit = 6; // 글자당 픽셀(대략) - 폰트·패딩 맞춰 조절
+      const calcWidth = baseWidth + travelTitle.length * charUnit;
       Confirm.show(
-        "Tranner",
+        "<b>Tranner</b>",
         `정말로 <b><${travelTitle}></b> 여행 계획을 삭제하시겠습니까?`,
         "네",
         "아니요",
         () => {
-          // 여행 계획 삭제 로직
           deleteTravelPlanMutate({ id: cardId });
         },
         () => {},
         {
-          width: "400px",
-          borderRadius: "10px",
+          width: `${calcWidth}px`,
+          borderRadius: "8px",
           fontFamily: "SUIT-Regular",
           plainText: false,
+          messageFontSize: "16px",
+          titleFontSize: "20px",
         }
       );
     };
@@ -123,7 +196,7 @@ const TravelPlanCard = memo(
         <div className="w-full flex flex-col justify-between">
           <div>
             <div className="flex justify-between">
-              <p className="text-[20px] font-bold">{travelTitle}</p>
+              <p className="text-[20px] font-bold truncate">{travelTitle}</p>
 
               <div
                 className={clsx(

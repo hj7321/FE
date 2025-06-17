@@ -8,6 +8,7 @@ import MapScreen from "../../components/screen/MapScreen";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import CustomDragLayer from "../../components/CustomDragLayer";
+import { useScheduleStore } from "../../stores/schedule.store";
 
 const TravelPlanPage = () => {
   const travelStartDate = useDateStore((state) => state.travelStartDate);
@@ -15,9 +16,14 @@ const TravelPlanPage = () => {
   const openModal = useModalStore((state) => state.openModal);
 
   useEffect(() => {
-    if (travelStartDate && travelEndDate) return;
-    openModal(<CalendarModal />, false);
-  }, [openModal]);
+    useScheduleStore.getState().resetAll();
+  }, []);
+
+  useEffect(() => {
+    if (!travelStartDate || !travelEndDate) {
+      openModal(<CalendarModal />, false);
+    }
+  }, []);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

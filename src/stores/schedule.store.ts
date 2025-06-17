@@ -1,7 +1,13 @@
 import { create } from "zustand";
 import { DailySchedule, ScheduledPlace } from "../types/schedule.type";
+import { Schedule } from "../types/travelPlan.type";
 
 interface ScheduleStore {
+  isEditMode: boolean;
+  setEditModeOn: () => void;
+  setEditModeOff: () => void;
+  meta: Schedule | null;
+  setMeta: (meta: Schedule) => void;
   schedule: {
     [daySeq: number]: DailySchedule; // daySeq는 일자 번호 (예: 0, 1, 2), 그 안에 시간별 스케줄이 있음
   };
@@ -36,9 +42,15 @@ interface ScheduleStore {
     fromIndex: number,
     toIndex: number
   ) => void; // 같은 시간대 내 순서 변경
+  resetAll: () => void;
 }
 
 export const useScheduleStore = create<ScheduleStore>()((set) => ({
+  isEditMode: false,
+  setEditModeOn: () => set({ isEditMode: true }),
+  setEditModeOff: () => set({ isEditMode: false }),
+  meta: null,
+  setMeta: (meta) => set({ meta }),
   schedule: {}, // 초기 스케줄은 빈 객체
 
   // 전체 스케줄을 통째로 새로운 객체로 교체
@@ -170,5 +182,11 @@ export const useScheduleStore = create<ScheduleStore>()((set) => ({
           },
         },
       };
+    }),
+  resetAll: () =>
+    set({
+      isEditMode: false,
+      meta: null,
+      schedule: {}, // ✨ 핵심: 스케줄 비우기
     }),
 }));

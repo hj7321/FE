@@ -47,6 +47,9 @@ const CalendarModal = () => {
     if (!startDate || !endDate) {
       Notify.failure("여행 기간을 선택해주세요.", {
         fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+        timeout: 5000,
       });
       return;
     }

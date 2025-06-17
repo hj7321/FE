@@ -11,6 +11,7 @@ import { TravelPlanButton } from "../../types/button.type";
 import { getLatLngByAddress } from "../../apis/geocoding.api";
 import { useMapStore } from "../../stores/map.store";
 import { debounce } from "lodash";
+import { useScheduleStore } from "../../stores/schedule.store";
 
 const travelPlanButtonList: TravelPlanButton[] = [
   "전체보기",
@@ -37,8 +38,21 @@ const PlaceListScreen = () => {
 
   const basketPlaces = useReadBasket(countryName!, regionName!);
 
-  const address = basketPlaces?.[0]?.address;
-  const { data: location } = useLatLng(address ?? "");
+  const firstSchedulePlace = useScheduleStore((s) => {
+    const dayKeys = Object.keys(s.schedule)
+      .map(Number) // "1" → 1
+      .sort((a, b) => a - b); // [1,2,3…]
+    const firstDay = s.schedule[dayKeys[0]];
+    if (!firstDay) return undefined;
+
+    const timeKey = Object.keys(firstDay).sort()[0]; // "07 : 00"
+    return firstDay[timeKey]?.[0]; // ScheduledPlace | undefined
+  });
+
+  const addressForLatLng =
+    basketPlaces?.[0]?.address ?? firstSchedulePlace?.address;
+  const { data: location } = useLatLng(addressForLatLng ?? "");
+
   const {
     data: nearbyPlaces,
     fetchNextPage: nearbyFetchNextPage,

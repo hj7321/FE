@@ -6,7 +6,6 @@ import useReadRecentPlace from "../../hooks/useReadRecentPlace";
 const MyPage = () => {
   const { data: { allPlans, scheduledPlans, pastPlans } = {} } =
     useReadTravelPlans();
-  console.log(allPlans);
 
   const { data: recentPlaces } = useReadRecentPlace();
 

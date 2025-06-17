@@ -7,6 +7,7 @@ import { AxiosResponse } from "axios";
 import { LoginType } from "../../types/auth.type";
 import { selfLogin } from "../../apis/login.api";
 import clsx from "clsx";
+import { Notify } from "notiflix";
 
 const popupWidth = 550;
 const popupHeight = 650;
@@ -39,7 +40,18 @@ const LoginForm = () => {
     },
     onError: (err) => {
       console.error("❌ 로그인 실패", err);
-      alert(err.message);
+      Notify.failure(
+        "로그인에 실패하였습니다.<br />잠시 후에 다시 이용해주세요.",
+        {
+          fontSize: "15px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          width: "260px",
+          position: "center-top",
+          zindex: 9999,
+          timeout: 5000,
+        }
+      );
     },
     onSettled: () => {
       setIsSending(false);

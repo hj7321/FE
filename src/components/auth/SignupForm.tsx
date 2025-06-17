@@ -72,19 +72,22 @@ const SignupForm = () => {
     mutationKey: ["checkEmail", form.email],
     mutationFn: checkEmail,
     onMutate: () => {
+      Notify.info("잠시만 기다려주세요.", {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+      });
       setIsSending((prev) => ({ ...prev, email: true }));
     },
     onSuccess: (response) => {
       console.log("✅ 인증번호 발송 성공", response);
-      // alert("인증번호가 발송되었습니다. 이메일을 확인해주세요.");
-      Report.success(
-        "Tranner",
-        "인증번호가 발송되었습니다. 이메일을 확인해주세요.",
-        "확인",
-        {
-          fontFamily: "SUIT-Regular",
-        }
-      );
+      Notify.success("인증번호가 발송되었습니다.<br />이메일을 확인해주세요.", {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        plainText: false,
+        timeout: 5000,
+        zindex: 9999,
+      });
       setIsValidForm((prev) => ({ ...prev, email: true }));
       setTimeLeft(300); // 5분 (300초)
       setIsTimerRunning(true);
@@ -92,7 +95,11 @@ const SignupForm = () => {
     },
     onError: (err) => {
       console.error("❌ 인증번호 발송 실패", err);
-      alert(err.message);
+      Notify.failure(err.message, {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+      });
       if (err.message.includes("이미 존재")) form.email = "";
       focusInput("email");
     },
@@ -114,8 +121,11 @@ const SignupForm = () => {
     },
     onSuccess: (response) => {
       console.log("✅ 인증번호 일치", response);
-      // alert("인증 완료!");
-      Notify.success("인증 완료!", { fontFamily: "SUIT-Regular" });
+      Notify.success("인증이 완료되었습니다.", {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+      });
       setTimeLeft(0);
       setIsTimerRunning(false);
       setIsValidForm((prev) => ({ ...prev, emailCode: true }));
@@ -123,7 +133,11 @@ const SignupForm = () => {
     },
     onError: (err) => {
       console.error("❌ 인증번호 불일치", err);
-      alert(err.message);
+      Notify.failure(err.message, {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+      });
       if (err.message.includes("만료")) form.emailCode = "";
       focusInput("emailCode");
     },
@@ -152,15 +166,29 @@ const SignupForm = () => {
     },
     onSuccess: (response) => {
       console.log("✅ 회원가입 완료", response);
-      // alert("회원가입이 완료되었습니다.");
-      Report.success("Tranner", "회원가입이 완료되었습니다.", "확인", {
-        fontFamily: "SUIT-Regular",
-      });
+      Report.success(
+        "<b>Tranner</b>",
+        "<div class='text-center'>회원가입이 완료되었습니다.</div>",
+        "확인",
+        {
+          titleFontSize: "20px",
+          messageFontSize: "16px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          zindex: 9999,
+          borderRadius: "8px",
+          svgSize: "60px",
+        }
+      );
       navigate("/");
     },
     onError: (err) => {
       console.error("❌ 회원가입 실패", err);
-      alert(err.message);
+      Notify.failure(err.message, {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+      });
       if (err.message.includes("이미 존재")) form.email = "";
       focusInput("email");
     },
@@ -207,21 +235,20 @@ const SignupForm = () => {
   };
 
   const handleEmailCheck = () => {
-    if (
-      form.email === "" ||
-      isTimerRunning ||
-      isValidForm.emailCode ||
-      isSending.email
-    )
-      return;
+    if (isEmailSendDisabled) return;
     if (!emailRegexp.test(form.email)) {
-      // alert("올바른 이메일 주소 형식으로 입력해주세요. 예: user@example.com");
       Report.failure(
-        "Tranner",
-        "올바른 이메일 주소 형식으로 입력해주세요. 예: user@example.com",
+        "<b>Tranner</b>",
+        "<div class='text-center'>올바른 이메일 주소 형식으로 입력해주세요.<br />예: user@example.com</div>",
         "확인",
         {
+          messageFontSize: "16px",
+          titleFontSize: "20px",
           fontFamily: "SUIT-Regular",
+          plainText: false,
+          zindex: 9999,
+          borderRadius: "8px",
+          svgSize: "60px",
         }
       );
       focusInput("email");
@@ -231,35 +258,42 @@ const SignupForm = () => {
   };
 
   const handleCodeCheck = () => {
-    if (!isValidForm.email || isValidForm.emailCode || isSending.emailCode)
-      return;
+    if (isCodeCheckDisabled) return;
     checkCodeMutate({ email: form.email, code: Number(form.emailCode) });
   };
 
   const handleIdCheck = async () => {
     setIsSending((prev) => ({ ...prev, id: true }));
 
-    if (form.id === "") return;
+    if (isIdCheckDisabled) return;
 
     const { data: isDuplicate, error } = await checkIdRefetch();
 
     if (isDuplicate) {
-      // alert("이미 존재하는 아이디입니다.");
       Notify.failure("이미 존재하는 아이디입니다.", {
         fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
       });
       form.id = "";
       focusInput("id");
     } else {
-      // alert("사용 가능한 아이디입니다.");
       Notify.success("사용 가능한 아이디입니다.", {
         fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
       });
       setIsValidForm((prev) => ({ ...prev, id: true }));
       focusInput("pw");
     }
 
-    if (error) alert(error.message);
+    if (error) {
+      Notify.failure(error.message, {
+        fontFamily: "SUIT-Regular",
+        fontSize: "15px",
+        zindex: 9999,
+      });
+    }
 
     setIsSending((prev) => ({ ...prev, id: false }));
     return;
@@ -267,7 +301,7 @@ const SignupForm = () => {
 
   const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 제출 방지
-    if (!isAllValid) return;
+    if (isSignupDisabled) return;
     signupMutate({ id: form.id, pw: form.pw, email: form.email });
   };
 
@@ -291,6 +325,20 @@ const SignupForm = () => {
       handleIdCheck(); // "중복 확인" 버튼 함수 실행
     }
   };
+
+  const isEmailSendDisabled =
+    form.email === "" ||
+    isTimerRunning ||
+    isValidForm.emailCode ||
+    isSending.email;
+  const isCodeCheckDisabled =
+    !isValidForm.email ||
+    isValidForm.emailCode ||
+    isSending.emailCode ||
+    form.emailCode === "";
+  const isIdCheckDisabled =
+    !idRegexp.test(form.id) || isSending.id || isValidForm.id;
+  const isSignupDisabled = !isAllValid || isSending.signup;
 
   useEffect(() => {
     if (!isTimerRunning || isValidForm.emailCode) return;
@@ -332,19 +380,10 @@ const SignupForm = () => {
         <button
           type="button"
           onClick={handleEmailCheck}
+          disabled={isEmailSendDisabled}
           className={clsx(
             "w-[250px] h-[30px] text-[11.5px] text-white rounded-[4px]",
-            form.email === ""
-              ? style_inactive
-              : isSending.email
-              ? style_inactive
-              : !isValidForm.email
-              ? style_active
-              : isTimerRunning
-              ? style_inactive
-              : isValidForm.emailCode
-              ? style_inactive
-              : style_active
+            isEmailSendDisabled ? style_inactive : style_active
           )}
         >
           인증번호 발송
@@ -366,15 +405,10 @@ const SignupForm = () => {
           <button
             type="button"
             onClick={handleCodeCheck}
+            disabled={isCodeCheckDisabled}
             className={clsx(
               "w-[50px] h-[45px] text-[11.5px] text-white rounded-[4px] px-[10px]",
-              !isValidForm.email
-                ? style_inactive
-                : isSending.emailCode
-                ? style_inactive
-                : isValidForm.emailCode
-                ? style_inactive
-                : style_active
+              isCodeCheckDisabled ? style_inactive : style_active
             )}
           >
             인증 확인
@@ -400,17 +434,10 @@ const SignupForm = () => {
           <button
             type="button"
             onClick={handleIdCheck}
+            disabled={isIdCheckDisabled}
             className={clsx(
               "w-[50px] h-[45px] text-[11.5px] text-white rounded-[4px] px-[10px]",
-              form.id === ""
-                ? style_inactive
-                : isSending.id
-                ? style_inactive
-                : errorMsg.id
-                ? style_inactive
-                : isValidForm.id
-                ? style_inactive
-                : style_active
+              isIdCheckDisabled ? style_inactive : style_active
             )}
           >
             중복 확인
@@ -455,13 +482,10 @@ const SignupForm = () => {
       </div>
       <button
         type="submit"
+        disabled={isSignupDisabled}
         className={clsx(
           "mt-[10px] w-[250px] h-[45px] text-[14px] text-white  rounded-[4px]",
-          !isAllValid
-            ? style_inactive
-            : isSending.signup
-            ? style_inactive
-            : style_active
+          isSignupDisabled ? style_inactive : style_active
         )}
       >
         회원가입

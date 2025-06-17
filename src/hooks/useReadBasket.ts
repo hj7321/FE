@@ -18,7 +18,7 @@ const useReadBasket = (countryName: string, regionName: string) => {
     gcTime: 2 * 60 * 60 * 1000, // 2시간 동안 캐시 유지 (garbage collection 대상 제외)
     refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
     enabled: isLogin && !!countryName && !!regionName,
-    retry: 2,
+    retry: 1,
     select: (data) => data.places,
   });
 

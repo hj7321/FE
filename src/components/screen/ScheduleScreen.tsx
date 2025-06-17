@@ -8,25 +8,27 @@ import ScheduleUnit from "../schedule/ScheduleUnit";
 import { useDragDropManager } from "react-dnd";
 import { useScheduleStore } from "../../stores/schedule.store";
 import { useMutation } from "@tanstack/react-query";
-import { createTravelPlan } from "../../apis/travelPlan.api";
-import { Confirm, Notify, Report } from "notiflix";
+import { createTravelPlan, modifyTravelPlan } from "../../apis/travelPlan.api";
+import { Confirm, Notify } from "notiflix";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
 import { TIMELINE } from "../../constants/timeline";
 import { useNavigate } from "react-router";
+import { getRoEuro } from "../../utils/getRoEuro";
+import { getEiGa } from "../../utils/getEiGa";
 
 const ScheduleScreen = () => {
-  const uniqueId = uuidv4();
-  const [titleInput, setTitleInput] = useState<string>("여행 1");
+  const [titleInput, setTitleInput] = useState<string>("여행");
   const [peopleInput, setPeopleInput] = useState<string>("1");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   console.log(selectedDate);
   const [dayNum, setDayNum] = useState<number>(1);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [highlightedTime, setHighlightedTime] = useState<string | null>(null);
+  const uniqueIdRef = useRef<string>(uuidv4());
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
-  const countryName = useFavoriteListStore((state) => state.countryName);
-  const regionName = useFavoriteListStore((state) => state.regionName);
+  const storeCountryName = useFavoriteListStore((state) => state.countryName);
+  const storeRegionName = useFavoriteListStore((state) => state.regionName);
 
   const travelStartDate = useDateStore((state) => state.travelStartDate);
   const travelEndDate = useDateStore((state) => state.travelEndDate);
@@ -34,6 +36,7 @@ const ScheduleScreen = () => {
     new Date(travelStartDate!),
     new Date(travelEndDate!)
   );
+  const resetDates = useDateStore((state) => state.resetDates);
 
   const rawSchedule = useScheduleStore((state) => state.schedule[dayNum]);
   const schedule = useMemo(() => rawSchedule ?? {}, [rawSchedule]);
@@ -41,16 +44,34 @@ const ScheduleScreen = () => {
     (state) => state.addPlaceToSchedule
   );
 
+  const isEditMode = useScheduleStore((state) => state.isEditMode);
+  const setEditModeOff = useScheduleStore((state) => state.setEditModeOff);
+  const editSchedule = useScheduleStore((state) => state.schedule);
+  const scheduleId = useScheduleStore.getState().meta?.scheduleId;
+
   const navigate = useNavigate();
+  console.log(isEditMode);
 
   const { mutate: createTravelPlanMutate } = useMutation({
-    mutationKey: ["createTravelPlan", uniqueId],
+    mutationKey: ["createTravelPlan", uniqueIdRef.current],
     mutationFn: createTravelPlan,
     onSuccess: (response) => {
-      console.log("✅ 여행 생성 성공", response);
+      resetDates();
+      console.log("✅ 여행 계획 생성 성공", response);
+
+      // 여행 제목 길이에 비례해 픽셀 수 계산
+      const baseWidth = 370; // 최소 너비(px)
+      const charUnit = 6; // 글자당 픽셀(대략) - 폰트·패딩 맞춰 조절
+      const calcWidth =
+        baseWidth +
+        storeCountryName!.length * charUnit +
+        storeRegionName!.length * charUnit +
+        titleInput.length * charUnit;
       Confirm.show(
-        "Tranner",
-        `<b>${countryName} ${regionName}</b>으로 떠나는 <b>${titleInput}</b>이 생성되었습니다.`,
+        "<b>Tranner</b>",
+        `<b>${storeCountryName} ${storeRegionName}</b>${getRoEuro(
+          storeRegionName!
+        )} 떠나는 <b>${titleInput}</b>${getEiGa(titleInput)} 생성되었습니다.`,
         "홈으로 이동",
         "마이페이지로 이동",
         () => {
@@ -60,15 +81,85 @@ const ScheduleScreen = () => {
           navigate("/my");
         },
         {
-          width: "400px",
-          borderRadius: "10px",
+          width: `${calcWidth}px`,
+          borderRadius: "8px",
           fontFamily: "SUIT-Regular",
           plainText: false,
+          messageFontSize: "16px",
+          titleFontSize: "20px",
+          zindex: 9999,
         }
       );
     },
     onError: (err) => {
-      console.error("❌ 여행 생성 실패", err);
+      console.error("❌ 여행 계획 생성 실패", err);
+      Notify.failure(
+        "여행 계획 생성에 실패했습니다.<br />잠시 후에 다시 이용해주세요.",
+        {
+          position: "left-top",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          fontSize: "15px",
+          width: "270px",
+          zindex: 9999,
+        }
+      );
+    },
+    retry: 1,
+  });
+
+  const { mutate: modifyTravelPlanMutate } = useMutation({
+    mutationKey: ["modifyTravelPlan", scheduleId],
+    mutationFn: modifyTravelPlan,
+    onSuccess: (response) => {
+      resetDates();
+      setEditModeOff();
+      console.log("✅ 여행 계획 수정 성공", response);
+
+      // 여행 제목 길이에 비례해 픽셀 수 계산
+      const baseWidth = 370; // 최소 너비(px)
+      const charUnit = 6; // 글자당 픽셀(대략) - 폰트·패딩 맞춰 조절
+      const calcWidth =
+        baseWidth +
+        storeCountryName!.length * charUnit +
+        storeRegionName!.length * charUnit +
+        titleInput.length * charUnit;
+      Confirm.show(
+        "<b>Tranner</b>",
+        `<b>${storeCountryName} ${storeRegionName}</b>${getRoEuro(
+          storeRegionName!
+        )} 떠나는 <b>${titleInput}</b>${getEiGa(titleInput)} 수정되었습니다.`,
+        "홈으로 이동",
+        "마이페이지로 이동",
+        () => {
+          navigate("/");
+        },
+        () => {
+          navigate("/my");
+        },
+        {
+          width: `${calcWidth}px`,
+          borderRadius: "8px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          messageFontSize: "16px",
+          titleFontSize: "20px",
+        }
+      );
+    },
+    onError: (err) => {
+      console.error("❌ 여행 계획 수정 실패", err);
+      Notify.failure(
+        "여행 계획 수정에 실패했습니다.<br />잠시 후에 다시 이용해주세요.",
+        {
+          position: "left-top",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          fontSize: "15px",
+          width: "270px",
+          zindex: 9999,
+        }
+      );
     },
     retry: 1,
   });
@@ -163,7 +254,9 @@ const ScheduleScreen = () => {
         Notify.failure("모든 여행 기간에 일정을 하나 이상 넣어주세요.", {
           position: "left-top",
           fontFamily: "SUIT-Regular",
-          width: "310px",
+          fontSize: "15px",
+          width: "340px",
+          zindex: 9999,
         });
         return;
       }
@@ -183,8 +276,8 @@ const ScheduleScreen = () => {
       startDate: startDateStr,
       endDate: endDateStr,
       howManyPeople: Number(peopleInput),
-      countryName: countryName!,
-      regionName: regionName!,
+      countryName: storeCountryName!,
+      regionName: storeRegionName!,
       detailSchedule: Object.entries(travelPeriod).map(([dayNumStr, _]) => {
         const dayNum = Number(dayNumStr);
         const daySchedule = schedule[dayNum];
@@ -208,24 +301,87 @@ const ScheduleScreen = () => {
     };
 
     // 4. 여행 생성 요청
-    createTravelPlanMutate(requestBody, {
-      onSuccess: () => {
-        Report.success(
-          "Tranner",
-          `${requestBody.regionName}으로 떠나는 ${requestBody.scheduleName}이 생성되었습니다.`,
-          "홈으로 이동",
-          {
-            fontFamily: "SUIT-Regular",
-          }
-        );
-      },
-      onError: () => {
-        Notify.failure("여행 생성 실패", {
+    createTravelPlanMutate(requestBody);
+  };
+
+  const handleEditTravelPlan = () => {
+    /* 0) 항상 ‘가장 최신’ 상태 스냅샷을 가져온다 */
+    const { meta, schedule: scheduleMap } = useScheduleStore.getState();
+
+    const { travelStartDate, travelEndDate } = useDateStore.getState();
+
+    /* guard */
+    if (!meta || !travelStartDate || !travelEndDate) {
+      return;
+    }
+
+    /* 1) 메타 구조분해 ― 클릭 시점의 최신 값 */
+    const {
+      scheduleId,
+      countryName: editCountryName,
+      regionName: editRegionName,
+    } = meta;
+    const travelPeriod = getDateMap(
+      new Date(travelStartDate!),
+      new Date(travelEndDate!)
+    );
+    const dayCount = Object.keys(travelPeriod).length;
+
+    /* 2) “비어 있는 날짜” 검증 */
+    for (let d = 1; d <= dayCount; d++) {
+      const daySched = scheduleMap[d];
+      if (!daySched || Object.keys(daySched).length === 0) {
+        Notify.failure("모든 여행 기간에 일정을 하나 이상 넣어주세요.", {
           position: "left-top",
           fontFamily: "SUIT-Regular",
+          fontSize: "15px",
+          width: "340px",
+          zindex: 9999,
         });
-      },
-    });
+        return;
+      }
+    }
+
+    /* 3) 날짜 ISO-string 변환 */
+    const startDateStr = new Date(travelStartDate!).toISOString().slice(0, 10);
+    const endDateStr = new Date(travelEndDate!).toISOString().slice(0, 10);
+
+    /* 4) 백엔드 요청 바디 생성 */
+    const requestBody = {
+      scheduleId, // ✅ 수정 시엔 반드시 포함
+      scheduleName: titleInput,
+      startDate: startDateStr,
+      endDate: endDateStr,
+      howManyPeople: Number(peopleInput),
+      countryName: editCountryName, // meta 에서 가져온 값
+      regionName: editRegionName,
+      detailSchedule: Object.entries(travelPeriod).map(([daySeqStr]) => {
+        const daySeq = Number(daySeqStr); // 1, 2, 3 …
+        const daySchedule = scheduleMap[daySeq];
+
+        /** 하루치 → scheduleByDay[] 변환 */
+        const scheduleByDay = Object.entries(daySchedule)
+          .flatMap(([_, places]) =>
+            places.map((p, idx) => ({
+              locationSeq: idx + 1, // 순서
+              startTime: p.period.split(" ~ ")[0], // "08 : 00"
+              endTime: p.period.split(" ~ ")[1], // "09 : 00"
+              placeName: p.placeName,
+              placeType: p.placeType,
+              placeId: p.placeId ?? "임시값",
+              address: p.address ?? "주소 미정",
+              latitude: p.latitude ?? 0,
+              longitude: p.longitude ?? 0,
+            }))
+          )
+          .filter(Boolean);
+
+        return { daySeq, scheduleByDay };
+      }),
+    };
+
+    /* 5) 수정 API 호출 */
+    if (scheduleId) modifyTravelPlanMutate(requestBody);
   };
 
   useEffect(() => {
@@ -245,6 +401,10 @@ const ScheduleScreen = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (storeRegionName) setTitleInput(`${storeRegionName} 여행`);
+  }, [storeRegionName]);
+
   return (
     <div className="bg-white h-screen flex flex-col border-r border-[#EDEDED] w-[290px]">
       <div className="px-[15px] py-[12px]">
@@ -255,12 +415,21 @@ const ScheduleScreen = () => {
             value={titleInput}
             onChange={(e) => setTitleInput(e.target.value)}
           />
-          <button
-            onClick={handleCreateTravelPlan}
-            className="text-white bg-common rounded-[4px] text-[12px] hover:cursor-pointer hover:bg-selected px-[9px] py-[6.5px]"
-          >
-            여행 생성하기
-          </button>
+          {isEditMode ? (
+            <button
+              onClick={handleEditTravelPlan}
+              className="text-white bg-common rounded-[4px] text-[12px] hover:cursor-pointer hover:bg-selected px-[9px] py-[6.5px]"
+            >
+              여행 수정하기
+            </button>
+          ) : (
+            <button
+              onClick={handleCreateTravelPlan}
+              className="text-white bg-common rounded-[4px] text-[12px] hover:cursor-pointer hover:bg-selected px-[9px] py-[6.5px]"
+            >
+              여행 생성하기
+            </button>
+          )}
         </div>
         <div className="text-[14px] text-[#939393] mt-[-3px] mb-[2px]">
           여행 인원수:
@@ -322,20 +491,25 @@ const ScheduleScreen = () => {
         </div>
       </div>
       <div className="px-[15px] pt-[5px] py-[15px] overflow-y-auto scrollbar-custom w-[278px]">
-        {TIMELINE.map((time) => (
-          <ScheduleUnit
-            key={time}
-            dayNum={dayNum}
-            time={time}
-            numOfCard={schedule[time]?.length || 1}
-            isHighlighted={highlightedTime === time}
-            highlightedTime={highlightedTime}
-            setHighlightedTime={setHighlightedTime}
-            onDropPlace={handleDropPlace}
-            schedule={schedule || {}}
-            isNeededDeleteButton
-          />
-        ))}
+        {TIMELINE.map((time) => {
+          const daySchedule = isEditMode
+            ? editSchedule[dayNum] ?? {} // editSchedule은 {[day]: DailySchedule}
+            : schedule; // 이미 DailySchedule
+          return (
+            <ScheduleUnit
+              key={time}
+              dayNum={dayNum}
+              time={time}
+              numOfCard={schedule[time]?.length || 1}
+              isHighlighted={highlightedTime === time}
+              highlightedTime={highlightedTime}
+              setHighlightedTime={setHighlightedTime}
+              onDropPlace={handleDropPlace}
+              schedule={daySchedule}
+              isNeededDeleteButton
+            />
+          );
+        })}
       </div>
     </div>
   );

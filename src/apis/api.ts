@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "../stores/auth.store";
+import { Report } from "notiflix";
 
 export const BASE_URL = "https://api.tranner.com/api";
 
@@ -96,8 +97,23 @@ api.interceptors.response.use(
         // 5. 리프레시 토큰도 만료 or 서버 오류 → 강제 로그아웃
         console.error("❌ refresh 실패:", refreshError);
         useAuthStore.getState().logout();
-        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-        window.location.href = "/login"; // 강제 페이지 이동
+        Report.failure(
+          "<b>Tranner</b>",
+          "<div class='text-center'>세션이 만료되었습니다. 다시 로그인해주세요.</div>",
+          "확인",
+          () => {
+            window.location.href = "/login"; // 강제 페이지 이동
+          },
+          {
+            messageFontSize: "16px",
+            titleFontSize: "20px",
+            fontFamily: "SUIT-Regular",
+            plainText: false,
+            zindex: 9999,
+            borderRadius: "8px",
+            svgSize: "60px",
+          }
+        );
 
         // 에러를 그대로 밖으로 던짐 → 이후 catch에서 처리 가능
         return Promise.reject(refreshError);

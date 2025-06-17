@@ -60,6 +60,12 @@ const ScheduleUnit = ({
             item.latitude,
             item.longitude
           );
+
+          // 장소명 길이에 비례해 픽셀 수 계산
+          const baseWidth = 300; // 최소 너비(px)
+          const charUnit = 6; // 글자당 픽셀(대략) - 폰트·패딩 맞춰 조절
+          const calcWidth = baseWidth + item.placeName.length * charUnit;
+
           Notify.success(
             `<b>${item.placeName}</b>${getEulReul(
               item.placeName
@@ -68,8 +74,13 @@ const ScheduleUnit = ({
               position: "left-top",
               fontFamily: "SUIT-Regular",
               plainText: false,
+              fontSize: "15px",
+              width: `${calcWidth}px`,
+              zindex: 9999,
+              clickToClose: true,
             }
           );
+
           return;
         }
 

@@ -19,12 +19,11 @@ const PlaceExplorationPage = () => {
   const [isComposing, setIsComposing] = useState<boolean>(false);
 
   const isLogin = useAuthStore((state) => state.isLogin);
-  const setCountryName = useFavoriteListStore((state) => state.setCountryName);
-  const setRegionName = useFavoriteListStore((state) => state.setRegionName);
 
-  const addOldFavoriteList = useFavoriteListStore(
-    (state) => state.addOldFavoriteList
-  );
+  const resetAllList = useFavoriteListStore((s) => s.resetAllList);
+  const setCountryName = useFavoriteListStore((s) => s.setCountryName);
+  const setRegionName = useFavoriteListStore((s) => s.setRegionName);
+  const addOldFavoriteList = useFavoriteListStore((s) => s.addOldFavoriteList);
 
   const basketData = useReadBasket(countryName!, regionName!);
 
@@ -54,7 +53,7 @@ const PlaceExplorationPage = () => {
     refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
     refetchInterval: 10 * 60 * 1000, // 10분마다 자동 refetch (배경 refetch 포함)
     enabled: !!countryName && !!regionName,
-    retry: 2,
+    retry: 1,
     select: ({ pages }) => pages.flatMap((page) => page.places),
   });
   // 1. queryFn() 함수는 서버에서 데이터를 요청하고 그 데이터를 useInfiniteQuery에 전달함
@@ -64,23 +63,18 @@ const PlaceExplorationPage = () => {
   // 5. fetchNextPage() 함수는 이 값을 다시 queryFn에 전달하여 새로운 데이터를 가져옴
 
   useEffect(() => {
+    resetAllList();
+    setCountryName(countryName);
+    setRegionName(regionName);
+
+    if (basketData) basketData.forEach((data) => addOldFavoriteList(data));
+  }, [countryName, regionName, basketData]);
+
+  useEffect(() => {
     if (!isFetchingNextPage && hasNextPage) {
       fetchNextPage();
     }
   }, [isFetchingNextPage, hasNextPage]);
-
-  useEffect(() => {
-    if (countryName && regionName) {
-      setCountryName(countryName);
-      setRegionName(regionName);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (basketData) {
-      basketData.forEach((data) => addOldFavoriteList(data));
-    }
-  }, [basketData, regionName, addOldFavoriteList]);
 
   useEffect(() => {
     const trimmedInput = inputValue?.trim();

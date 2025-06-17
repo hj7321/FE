@@ -36,7 +36,7 @@ const RecentPlaceCard = memo(
           className="rounded-[4px] h-[160px] object-cover mb-[5px] text-[12px]"
         />
         <p className="text-[13px] text-[#8b8b8b] mb-[-1px]">{countryName}</p>
-        <p className="font-bold">{placeName}</p>
+        <p className="font-bold truncate">{placeName}</p>
       </div>
     );
   }

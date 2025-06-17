@@ -27,6 +27,7 @@ const Slider = ({ countryName, regionName }: SliderProps) => {
     gcTime: 2 * 60 * 60 * 1000, // 2시간 동안 캐시 유지 (garbage collection 대상 제외)
     refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
     refetchInterval: 10 * 60 * 1000, // 10분마다 자동 refetch (배경 refetch 포함)
+    retry: 1,
   });
 
   return (

@@ -4,6 +4,7 @@ import { Place } from "../types/place.type";
 import { useFavoriteListStore } from "../stores/favoriteList.store";
 import useBasketMutations from "../hooks/useBasketMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { Notify } from "notiflix";
 
 interface FavoritePlaceListBoxProps {
   oldFavoriteList: Place[];
@@ -16,8 +17,6 @@ const FavoritePlaceListBox = ({
 }: FavoritePlaceListBoxProps) => {
   const queryClient = useQueryClient();
 
-  console.log(oldFavoriteList);
-  console.log(newFavoriteList);
   const favoriteList = [...oldFavoriteList, ...newFavoriteList];
   const addList = useFavoriteListStore((state) => state.addList);
   const deleteList = useFavoriteListStore((state) => state.deleteList);
@@ -30,7 +29,16 @@ const FavoritePlaceListBox = ({
   const navigate = useNavigate();
 
   const handlePlanTravel = async () => {
-    if (favoriteList.length === 0) return alert("장소를 하나 이상 담아주세요.");
+    if (favoriteList.length === 0) {
+      Notify.warning("장소를 하나 이상 담아주세요.", {
+        position: "right-bottom",
+        fontSize: "15px",
+        fontFamily: "SUIT-Regular",
+        zindex: 9999,
+        timeout: 5000,
+      });
+      return;
+    }
     if (addList.length > 0 && countryName && regionName) {
       try {
         await insertBasketDataMutateAsync({
@@ -38,8 +46,18 @@ const FavoritePlaceListBox = ({
           regionName,
           places: addList,
         });
-      } catch (e) {
-        console.error("🛑 장바구니 추가 실패", e);
+      } catch (err) {
+        console.error("❌ 장바구니 추가 실패", err);
+        Notify.failure(
+          "장바구니에 장소를 추가하지 못했습니다.<br />잠시 후에 다시 이용해주세요.",
+          {
+            fontFamily: "SUIT-Regular",
+            fontSize: "15px",
+            plainText: false,
+            zindex: 9999,
+            timeout: 5000,
+          }
+        );
         return;
       }
     }
@@ -53,8 +71,19 @@ const FavoritePlaceListBox = ({
             placeId: [list.placeId],
           });
         }
-      } catch (e) {
-        console.error("❌ 장바구니 삭제 중 에러 발생:", e);
+      } catch (err) {
+        console.error("❌ 장바구니 삭제 중 에러 발생:", err);
+        Notify.failure(
+          "장바구니에서 장소를 삭제하지 못했습니다.<br />잠시 후에 다시 이용해주세요.",
+          {
+            fontFamily: "SUIT-Regular",
+            fontSize: "15px",
+            plainText: false,
+            zindex: 9999,
+            timeout: 5000,
+          }
+        );
+        return;
       }
     }
 

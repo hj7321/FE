@@ -58,7 +58,7 @@ const FavoriteCard = memo(
           loading="lazy"
           className="text-[12px] rounded-[4px] h-[107px] w-[137px] object-cover"
         />
-        <p className="text-[14px]">{cardName}</p>
+        <p className="text-[14px] truncate">{cardName}</p>
       </div>
     );
   }

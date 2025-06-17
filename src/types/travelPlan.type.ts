@@ -7,6 +7,10 @@ export type MiniSchedule = {
     placeName: string;
     placeType: string;
     period: string;
+    placeId?: string;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
   }[];
 };
 
@@ -34,6 +38,7 @@ export type ScheduleByDay = {
   address?: string;
   latitude?: number;
   longitude?: number;
+  memo?: string | null;
 };
 
 export type DetailSchedule = {

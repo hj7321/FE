@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useEssentialSurveyStore } from "../../stores/essentialSurvey.store";
+import { Notify } from "notiflix";
 
 interface SurveyHeaderProps {
   isClickedEssential: boolean;
@@ -29,7 +30,12 @@ const SurveyHeader = ({
       endDate === null ||
       budget === null
     ) {
-      alert("모든 필수 응답을 입력해주세요.");
+      Notify.failure("모든 필수 응답을 입력해주세요.", {
+        width: "260px",
+        fontSize: "15px",
+        fontFamily: "SUIT-Regular",
+        zindex: 9999,
+      });
       return;
     }
 

@@ -5,6 +5,7 @@ import { useFavoriteListStore } from "../../stores/favoriteList.store";
 import { ReadPlaceDetailResponse } from "../../types/place.type";
 import { useAuthStore } from "../../stores/auth.store";
 import { Report } from "notiflix";
+import { useNavigate } from "react-router";
 
 interface PlaceModalProps {
   cardName: string;
@@ -19,6 +20,7 @@ const PlaceModal = ({
   placeData,
   isNeededButton,
 }: PlaceModalProps) => {
+  const navigate = useNavigate();
   const isLogin = useAuthStore((state) => state.isLogin);
   const closeModal = useModalStore((state) => state.closeModal);
   const addNewFavoriteList = useFavoriteListStore(
@@ -28,11 +30,24 @@ const PlaceModal = ({
 
   const handleAddFavoriteList = () => {
     if (!isLogin) {
-      // alert("로그인 후에 이용해주세요.");
-      Report.failure("Tranner", "로그인 후에 이용해주세요.", "확인", {
-        titleFontSize: "20px",
-        fontFamily: "SUIT-Regular",
-      });
+      Report.failure(
+        "<b>Tranner</b>",
+        "<div class='text-center'>로그인 후에 이용해주세요.</div>",
+        "확인",
+        () => {
+          closeModal();
+          navigate("/login");
+        },
+        {
+          titleFontSize: "20px",
+          messageFontSize: "16px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          zindex: 9999,
+          borderRadius: "8px",
+          svgSize: "60px",
+        }
+      );
       return;
     }
 

@@ -29,10 +29,7 @@ const useSearchNearby = (
     refetchOnWindowFocus: false, // 윈도우 포커스 시 자동 refetch 비활성화
     refetchInterval: 10 * 60 * 1000, // 10분마다 자동 refetch (배경 refetch 포함)
     retry: 1,
-    select: ({ pages }) => {
-      console.log(pages);
-      return pages.flatMap((page) => page.places);
-    },
+    select: ({ pages }) => pages.flatMap((page) => page.places),
     enabled: options?.enabled,
   });
 };

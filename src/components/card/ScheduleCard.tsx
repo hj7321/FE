@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { memo, useEffect, useRef, useState } from "react";
 import { useScheduleStore } from "../../stores/schedule.store";
-import { Notify } from "notiflix";
+import { Confirm, Notify } from "notiflix";
 import TimeEditor from "../schedule/TimeEditor";
 import { useDrag } from "react-dnd";
 import { getPeriodParts } from "../../utils/getPeriodParts";
@@ -116,6 +116,8 @@ const ScheduleCard = memo(
         Notify.failure("여행 시간을 정확히 입력해주세요.", {
           position: "left-top",
           fontFamily: "SUIT-Regular",
+          fontSize: "15px",
+          zindex: 9999,
         });
         return;
       }
@@ -141,9 +143,28 @@ const ScheduleCard = memo(
     };
 
     const handleDelete = () => {
-      if (window.confirm("정말 일정을 삭제하시겠습니까?")) {
-        removePlaceFromSchedule(daySeq, time, index);
-      }
+      // 장소명 길이에 비례해 픽셀 수 계산
+      const baseWidth = 290; // 최소 너비(px)
+      const charUnit = 6; // 글자당 픽셀(대략) - 폰트·패딩 맞춰 조절
+      const calcWidth = baseWidth + placeName.length * charUnit;
+      Confirm.show(
+        "<b>Tranner</b>",
+        `<b>${period}</b>의 <b>${placeName}</b> 일정을<br />삭제하시겠습니까?`,
+        "네",
+        "아니요",
+        () => {
+          removePlaceFromSchedule(daySeq, time, index);
+        },
+        () => {},
+        {
+          width: `${calcWidth}px`,
+          borderRadius: "8px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          messageFontSize: "16px",
+          titleFontSize: "20px",
+        }
+      );
     };
 
     const validateAndSubmit = () => {
@@ -160,6 +181,8 @@ const ScheduleCard = memo(
         Notify.failure("여행 시간을 정확히 입력해주세요.", {
           position: "left-top",
           fontFamily: "SUIT-Regular",
+          fontSize: "15px",
+          zindex: 9999,
         });
         // 에디터 닫지 않음!
         return;
