@@ -7,6 +7,8 @@ export function parseDetailSchedule(detail: DetailSchedule[]): {
 } {
   const out: { [d: number]: DailySchedule } = {};
 
+  if (!Array.isArray(detail)) return out;
+
   detail.forEach(({ daySeq, scheduleByDay }) => {
     /* 하루치 초기화 */
     if (!out[daySeq]) out[daySeq] = {};

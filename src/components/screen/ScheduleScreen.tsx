@@ -47,6 +47,8 @@ const ScheduleScreen = () => {
   const addPlaceToSchedule = useScheduleStore(
     (state) => state.addPlaceToSchedule
   );
+  console.log("ScheduleScreen 렌더링 시 rawSchedule 상태 확인:", rawSchedule);
+  console.log("ScheduleScreen 렌더링 시 schedule 상태 확인:", schedule);
 
   const isEditMode = useScheduleStore((state) => state.isEditMode);
   const setEditModeOff = useScheduleStore((state) => state.setEditModeOff);
@@ -332,42 +334,44 @@ const ScheduleScreen = () => {
     const startDateStr = new Date(travelStartDate!).toISOString().slice(0, 10);
     const endDateStr = new Date(travelEndDate!).toISOString().slice(0, 10);
 
-    /* 4) 백엔드 요청 바디 생성 */
-    const requestBody = {
-      scheduleId, // ✅ 수정 시엔 반드시 포함
-      scheduleName: titleInput,
-      startDate: startDateStr,
-      endDate: endDateStr,
-      howManyPeople: Number(peopleInput),
-      countryName: editCountryName, // meta 에서 가져온 값
-      regionName: editRegionName,
-      detailSchedule: Object.entries(travelPeriod).map(([daySeqStr]) => {
-        const daySeq = Number(daySeqStr); // 1, 2, 3 …
-        const daySchedule = scheduleMap[daySeq];
+    if (scheduleId !== undefined) {
+      /* 4) 백엔드 요청 바디 생성 */
+      const requestBody = {
+        scheduleId, // ✅ 수정 시엔 반드시 포함
+        scheduleName: titleInput,
+        startDate: startDateStr,
+        endDate: endDateStr,
+        howManyPeople: Number(peopleInput),
+        countryName: editCountryName, // meta 에서 가져온 값
+        regionName: editRegionName,
+        detailSchedule: Object.entries(travelPeriod).map(([daySeqStr]) => {
+          const daySeq = Number(daySeqStr); // 1, 2, 3 …
+          const daySchedule = scheduleMap[daySeq];
 
-        /** 하루치 → scheduleByDay[] 변환 */
-        const scheduleByDay = Object.entries(daySchedule)
-          .flatMap(([_, places]) =>
-            places.map((p, idx) => ({
-              locationSeq: idx + 1, // 순서
-              startTime: p.period.split(" ~ ")[0], // "08 : 00"
-              endTime: p.period.split(" ~ ")[1], // "09 : 00"
-              placeName: p.placeName,
-              placeType: p.placeType,
-              placeId: p.placeId ?? "임시값",
-              address: p.address ?? "주소 미정",
-              latitude: p.latitude ?? 0,
-              longitude: p.longitude ?? 0,
-            }))
-          )
-          .filter(Boolean);
+          /** 하루치 → scheduleByDay[] 변환 */
+          const scheduleByDay = Object.entries(daySchedule)
+            .flatMap(([_, places]) =>
+              places.map((p, idx) => ({
+                locationSeq: idx + 1, // 순서
+                startTime: p.period.split(" ~ ")[0], // "08 : 00"
+                endTime: p.period.split(" ~ ")[1], // "09 : 00"
+                placeName: p.placeName,
+                placeType: p.placeType,
+                placeId: p.placeId ?? "임시값",
+                address: p.address ?? "주소 미정",
+                latitude: p.latitude ?? 0,
+                longitude: p.longitude ?? 0,
+              }))
+            )
+            .filter(Boolean);
 
-        return { daySeq, scheduleByDay };
-      }),
-    };
+          return { daySeq, scheduleByDay };
+        }),
+      };
 
-    /* 5) 수정 API 호출 */
-    if (scheduleId) modifyTravelPlanMutate(requestBody);
+      /* 5) 수정 API 호출 */
+      modifyTravelPlanMutate(requestBody);
+    }
   };
 
   useEffect(() => {

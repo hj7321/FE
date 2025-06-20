@@ -15,8 +15,8 @@ export type MiniSchedule = {
 };
 
 export type Schedule = {
-  scheduleId: number;
-  scheduleName: string;
+  scheduleId?: number;
+  scheduleName?: string;
   startDate: string;
   endDate: string;
   howManyPeople: number;
@@ -47,7 +47,7 @@ export type DetailSchedule = {
 };
 
 export type CreateTravelSchedule = {
-  scheduleName: string;
+  scheduleName?: string;
   startDate: string;
   endDate: string;
   howManyPeople: number;

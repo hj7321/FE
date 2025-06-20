@@ -118,12 +118,13 @@ const TravelPlanCard = memo(
         regionName,
         detailSchedule,
       } = data;
+      console.log("detailSchedule: ", detailSchedule);
       const schedule = parseDetailSchedule(detailSchedule);
 
       setDates(new Date(startDate), new Date(endDate));
       setMeta({
         scheduleId: cardId,
-        scheduleName,
+        scheduleName: scheduleName!,
         startDate,
         endDate,
         howManyPeople,

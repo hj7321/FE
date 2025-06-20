@@ -2,10 +2,11 @@ import { useState } from "react";
 import SurveyHeader from "./SurveyHeader";
 import EssentialQuestions from "./EssentialQuestions";
 import OptionalQuestions from "./OptionalQuestions";
-// import Loading from "./Loading";
+import Loading from "./Loading";
 
 const AISurvey = () => {
   const [isClickedEssential, setIsClickedEssential] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
     <div className="scrollbar-partial-rounded fixed bottom-[40px] right-[85px] z-[1000]">
@@ -13,11 +14,17 @@ const AISurvey = () => {
         <SurveyHeader
           isClickedEssential={isClickedEssential}
           setIsClickedEssential={setIsClickedEssential}
+          setIsLoading={setIsLoading}
         />
-        <section className="mt-[20px]">
-          {isClickedEssential ? <EssentialQuestions /> : <OptionalQuestions />}
+        <section className="mt-[20px] h-full">
+          {isLoading ? (
+            <Loading />
+          ) : isClickedEssential ? (
+            <EssentialQuestions />
+          ) : (
+            <OptionalQuestions />
+          )}
         </section>
-        {/* <Loading /> */}
       </div>
     </div>
   );

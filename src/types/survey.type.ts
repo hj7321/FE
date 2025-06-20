@@ -7,25 +7,22 @@ export type PreferenceCategory = {
   nonPrefer: string[];
 };
 
+export type TravelPreference = {
+  travelPurpose: PreferenceCategory;
+  accommodation: PreferenceCategory;
+  restaurant: PreferenceCategory;
+};
+
 export type TravelPeriod = {
-  start_date: string; // "YYYY-MM-DD"
-  end_date: string; // "YYYY-MM-DD"
-};
-
-export type GroupInfo = {
-  num_people: number;
-};
-
-export type BudgetRange = {
-  min: number;
-  max: number;
+  startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
 };
 
 export interface TravelPlanPreferences {
-  travel_period: TravelPeriod;
-  group: GroupInfo;
-  budget: BudgetRange;
+  numOfPeople: number;
+  travelPeriod: TravelPeriod;
+  travelBudget: number;
+  transportation: Transportation[];
   region: string;
-  transportation_preferences: Transportation[];
-  travel_style_preferences: PreferenceCategory;
+  preference: TravelPreference;
 }

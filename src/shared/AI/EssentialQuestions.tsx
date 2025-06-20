@@ -89,13 +89,16 @@ const EssentialQuestions = () => {
     }
   };
 
-  // 여행 지역에 대한 이벤트 핸들러 (제한: 한국어만 입력 가능. 영어, 특수문자, 숫자 등등 입력 안되도록)
+  // 여행 지역에 대한 이벤트 핸들러 (제한: 한국어, 영어만 입력 가능. 특수문자, 숫자 등등 입력 안되도록)
   const handleChangeTravelRegion = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 1) 허용 문자만(한글+공백) 남기기
-    const onlyKorean = e.target.value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, "");
+    // 1) 허용 문자만(한글+영어+공백) 남기기
+    const onlyKoreanAndEnglish = e.target.value.replace(
+      /[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z\s]/g,
+      ""
+    );
 
     // 2) 중복 공백 정리 → 앞쪽 공백 제거
-    const cleaned = onlyKorean.replace(/\s{2,}/g, " ").trimStart();
+    const cleaned = onlyKoreanAndEnglish.replace(/\s{2,}/g, " ").trimStart();
 
     // 3) 로컬 상태 & 전역 상태(스토어) 동시 반영
     setTravelRegion(cleaned);

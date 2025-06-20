@@ -9,7 +9,7 @@ const OptionalQuestions = () => {
         <h1 className="mb-[5px]">1. 어떤 교통수단을 이용하실 예정인가요?</h1>
         <div className="ml-[12px] flex gap-[10px]">
           {TRANSPORT_OPTIONS.map((option) => (
-            <TransportationButton buttonName={option} />
+            <TransportationButton key={option} buttonName={option} />
           ))}
         </div>
       </div>

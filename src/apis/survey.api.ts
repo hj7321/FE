@@ -2,7 +2,7 @@ import axios from "axios";
 import { TravelPlanPreferences } from "../types/survey.type";
 
 export const sendSurveyRequest = async (survey: TravelPlanPreferences) => {
-  const path = "AI URL 넣기"; // TODO: AI URL 넣기
+  const path = "http://3.34.200.220:8000/plan";
 
   try {
     const response = await axios.post(path, survey);
