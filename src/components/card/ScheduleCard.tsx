@@ -6,6 +6,7 @@ import TimeEditor from "../schedule/TimeEditor";
 import { useDrag } from "react-dnd";
 import { getPeriodParts } from "../../utils/getPeriodParts";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import { useMapStore } from "../../stores/map.store";
 
 interface ScheduleCardProps {
   isNeededDeleteButton?: boolean;
@@ -17,6 +18,8 @@ interface ScheduleCardProps {
   time: string;
   index: number;
   isDragPreview?: boolean;
+  latitude: number;
+  longitude: number;
 }
 
 const ScheduleCard = memo(
@@ -29,6 +32,8 @@ const ScheduleCard = memo(
     daySeq,
     time,
     index,
+    latitude,
+    longitude,
   }: ScheduleCardProps) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
@@ -52,6 +57,7 @@ const ScheduleCard = memo(
     const removePlaceFromSchedule = useScheduleStore(
       (state) => state.removePlaceFromSchedule
     );
+    const setCenter = useMapStore((s) => s.setCenter);
 
     // 1. DOM 요소에 접근하기 위해 useRef를 사용해 HTMLDivElement에 대한 참조 생성
     const ref = useRef<HTMLDivElement>(null);
@@ -103,10 +109,10 @@ const ScheduleCard = memo(
 
     // 시간 수정 완료 (엔터/blur)
     const handleValidSubmit = () => {
-      const sh = startHour.padStart(2, "0");
-      const sm = startMin.padStart(2, "0");
-      const eh = endHour.padStart(2, "0");
-      const em = endMin.padStart(2, "0");
+      const sh = startHourState.padStart(2, "0");
+      const sm = startMinState.padStart(2, "0");
+      const eh = endHourState.padStart(2, "0");
+      const em = endMinState.padStart(2, "0");
       const start = Number(sh) * 60 + Number(sm);
       const end = Number(eh) * 60 + Number(em);
 
@@ -198,10 +204,20 @@ const ScheduleCard = memo(
       "rounded-[6px] border py-[5px] px-[8px] h-fit",
       isNeededDeleteButton
         ? "border-[#FF7FF5] bg-[#ffe4fe] w-[228px]"
-        : "border-[#7FFFF2] bg-[#e5fffc] w-fit max-w-[2280px]",
+        : "border-[#7FFFF2] bg-[#e5fffc] w-fit max-w-[228px]",
       isFirstSchedule && "mt-[5px]",
       error && "!border-[#FF7F81] !bg-[#ffe4e3]"
     );
+
+    useEffect(() => {
+      if (!isEditing) {
+        const { startHour, startMin, endHour, endMin } = getPeriodParts(period);
+        setStartHour(startHour);
+        setStartMin(startMin);
+        setEndHour(endHour);
+        setEndMin(endMin);
+      }
+    }, [period, isEditing]);
 
     // 모든 인풋에서 포커스가 빠졌을 때만 유효성 검사
     useEffect(() => {
@@ -218,6 +234,7 @@ const ScheduleCard = memo(
         style={{
           opacity: isDragging ? 0.5 : 1,
         }}
+        onClick={() => setCenter(latitude, longitude, placeName)}
       >
         <div className="flex gap-[8px] items-center">
           <p className="text-[14px] font-bold truncate">{placeName}</p>

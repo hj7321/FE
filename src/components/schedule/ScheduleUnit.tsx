@@ -159,6 +159,8 @@ const ScheduleUnit = ({
                 daySeq={dayNum}
                 time={time}
                 index={idx}
+                latitude={item.latitude ?? 0}
+                longitude={item.longitude ?? 0}
               />
             ))}
         </div>

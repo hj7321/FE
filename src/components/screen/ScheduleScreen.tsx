@@ -7,7 +7,7 @@ import ChangeDateOverlay from "../overlay/ChangeDateOverlay";
 import ScheduleUnit from "../schedule/ScheduleUnit";
 import { useDragDropManager } from "react-dnd";
 import { useScheduleStore } from "../../stores/schedule.store";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTravelPlan, modifyTravelPlan } from "../../apis/travelPlan.api";
 import { Confirm, Notify } from "notiflix";
 import { useFavoriteListStore } from "../../stores/favoriteList.store";
@@ -15,8 +15,12 @@ import { TIMELINE } from "../../constants/timeline";
 import { useNavigate } from "react-router";
 import { getRoEuro } from "../../utils/getRoEuro";
 import { getEiGa } from "../../utils/getEiGa";
+import { buildDropPlaceHandler } from "../../utils/dropPlace";
+import { useDaySelectionStore } from "../../stores/day.store";
 
 const ScheduleScreen = () => {
+  const queryClient = useQueryClient();
+
   const [titleInput, setTitleInput] = useState<string>("여행");
   const [peopleInput, setPeopleInput] = useState<string>("1");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -47,10 +51,16 @@ const ScheduleScreen = () => {
   const isEditMode = useScheduleStore((state) => state.isEditMode);
   const setEditModeOff = useScheduleStore((state) => state.setEditModeOff);
   const editSchedule = useScheduleStore((state) => state.schedule);
+
   const scheduleId = useScheduleStore.getState().meta?.scheduleId;
 
   const navigate = useNavigate();
   console.log(isEditMode);
+
+  const handleDropPlace = useMemo(
+    () => buildDropPlaceHandler(dayNum, addPlaceToSchedule),
+    [dayNum, addPlaceToSchedule]
+  );
 
   const { mutate: createTravelPlanMutate } = useMutation({
     mutationKey: ["createTravelPlan", uniqueIdRef.current],
@@ -75,9 +85,11 @@ const ScheduleScreen = () => {
         "홈으로 이동",
         "마이페이지로 이동",
         () => {
+          queryClient.invalidateQueries({ queryKey: ["readTravelPlanList"] });
           navigate("/");
         },
         () => {
+          queryClient.invalidateQueries({ queryKey: ["readTravelPlanList"] });
           navigate("/my");
         },
         {
@@ -132,9 +144,11 @@ const ScheduleScreen = () => {
         "홈으로 이동",
         "마이페이지로 이동",
         () => {
+          queryClient.invalidateQueries({ queryKey: ["readTravelPlanList"] });
           navigate("/");
         },
         () => {
+          queryClient.invalidateQueries({ queryKey: ["readTravelPlanList"] });
           navigate("/my");
         },
         {
@@ -167,6 +181,7 @@ const ScheduleScreen = () => {
   const handleChangeSelectedDate = (newDayNum: number) => {
     setDayNum(newDayNum);
     setSelectedDate(travelPeriod[newDayNum]);
+    useDaySelectionStore.getState().setSelectedDay(newDayNum);
     setIsClicked(false); // 날짜 클릭 시 오버레이 닫기
   };
 
@@ -210,35 +225,6 @@ const ScheduleScreen = () => {
     }
   };
 
-  // 드롭될 때 실행되는 함수
-  const handleDropPlace = (
-    time: string,
-    placeName: string,
-    placeType: string,
-    placeId: string,
-    address: string,
-    latitude: number,
-    longitude: number
-  ) => {
-    // time이 "10:00"이라면, period를 "10:00 ~ 11:00"으로 설정
-    const [startHour] = time.split(" : ");
-    const start = `${startHour.padStart(2, "0")}:00`;
-    const end = `${(parseInt(startHour, 10) + 1)
-      .toString()
-      .padStart(2, "0")}:00`;
-
-    // dayNum(현재 날짜 인덱스)와 시간, 장소 정보로 추가
-    addPlaceToSchedule(dayNum, time, {
-      placeName,
-      placeType,
-      period: `${start} ~ ${end}`,
-      placeId,
-      address,
-      latitude,
-      longitude,
-    });
-  };
-
   const handleCreateTravelPlan = () => {
     const schedule = useScheduleStore.getState().schedule;
     const travelPeriod = getDateMap(
@@ -255,7 +241,7 @@ const ScheduleScreen = () => {
           position: "left-top",
           fontFamily: "SUIT-Regular",
           fontSize: "15px",
-          width: "340px",
+          width: "350px",
           zindex: 9999,
         });
         return;
@@ -335,7 +321,7 @@ const ScheduleScreen = () => {
           position: "left-top",
           fontFamily: "SUIT-Regular",
           fontSize: "15px",
-          width: "340px",
+          width: "350px",
           zindex: 9999,
         });
         return;

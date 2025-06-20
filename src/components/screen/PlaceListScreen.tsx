@@ -61,6 +61,7 @@ const PlaceListScreen = () => {
   } = useSearchNearby(location?.lat ?? 0, location?.lng ?? 0, {
     enabled: nearbyRequested,
   });
+  console.log(nearbyPlaces);
 
   const {
     data: textPlaces,
@@ -228,6 +229,9 @@ const PlaceListScreen = () => {
               }
               placeId={place.placeId}
               placeType={place.placeType}
+              address={place.address}
+              latitude={place.latitude}
+              longitude={place.longitude}
             />
           ))}
         </div>

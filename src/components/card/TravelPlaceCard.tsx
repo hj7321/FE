@@ -12,6 +12,9 @@ interface TravelPlaceCardProps {
   cardImg: string;
   placeId: string;
   placeType: string | undefined;
+  address: string;
+  latitude: number;
+  longitude: number;
   isFavorite?: boolean;
   isDragPreview?: boolean;
 }
@@ -22,6 +25,9 @@ const TravelPlaceCard = memo(
     cardImg,
     placeId,
     placeType,
+    address,
+    latitude,
+    longitude,
     isFavorite = false,
     isDragPreview = false,
   }: TravelPlaceCardProps) => {
@@ -45,6 +51,9 @@ const TravelPlaceCard = memo(
         isFavorite,
         placeId,
         placeType,
+        address,
+        latitude,
+        longitude,
       }, // 드래그 시 전달될 데이터. Drop 함수에서 이 데이터를 사용할 수 있음
       collect: (monitor) => ({
         isDragging: monitor.isDragging(), // 현재 드래그 중인지 여부를 수집 (스타일 변경 등에 사용)

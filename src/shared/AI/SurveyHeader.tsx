@@ -1,6 +1,10 @@
 import clsx from "clsx";
 import { useEssentialSurveyStore } from "../../stores/essentialSurvey.store";
 import { Notify } from "notiflix";
+import { useOptionalSurveyStore } from "../../stores/optionalSurvey.store";
+import { useMutation } from "@tanstack/react-query";
+import { sendSurveyRequest } from "../../apis/survey.api";
+import { TravelPlanPreferences } from "../../types/survey.type";
 
 interface SurveyHeaderProps {
   isClickedEssential: boolean;
@@ -11,25 +15,58 @@ const SurveyHeader = ({
   isClickedEssential,
   setIsClickedEssential,
 }: SurveyHeaderProps) => {
-  // [TODO] 구조 분해 할당 방식 vs. 선택적 구독 차이 비교하기
-  const { people, startDate, endDate, budget } = useEssentialSurveyStore();
-  // const {
-  //   transportation,
-  //   preferTravelPurpose,
-  //   nonPreferTravelPurpose,
-  //   preferAccommodation,
-  //   nonPreferAccommodation,
-  //   preferRestaurant,
-  //   nonPreferRestaurant,
-  // } = useOptionalSurveyStore();
+  const {
+    people,
+    startDate,
+    endDate,
+    budget,
+    region,
+    reset: resetEssential,
+  } = useEssentialSurveyStore();
+  const {
+    transportation,
+    preferTravelPurpose,
+    nonPreferTravelPurpose,
+    preferAccommodation,
+    nonPreferAccommodation,
+    preferRestaurant,
+    nonPreferRestaurant,
+    reset: resetOptional,
+  } = useOptionalSurveyStore();
+
+  const { mutate: sendSurveyRequestMutate } = useMutation({
+    mutationKey: ["sendSurveyRequest"],
+    mutationFn: sendSurveyRequest,
+    onSuccess: (response) => {
+      console.log("✅ 설문 제출 완료", response);
+      Notify.success("설문이 제출되었습니다!", {
+        width: "260px",
+        fontSize: "15px",
+        fontFamily: "SUIT-Regular",
+        zindex: 9999,
+      });
+      resetEssential();
+      resetOptional();
+    },
+    onError: (err) => {
+      console.error("❌ 설문 제출 실패", err);
+      Notify.failure(
+        "설문이 제출되지 않았습니다.<br />잠시 후에 다시 이용해주세요.",
+        {
+          fontSize: "15px",
+          fontFamily: "SUIT-Regular",
+          plainText: false,
+          width: "260px",
+          position: "center-top",
+          zindex: 9999,
+          timeout: 5000,
+        }
+      );
+    },
+  });
 
   const handleSubmit = () => {
-    if (
-      people === null ||
-      startDate === null ||
-      endDate === null ||
-      budget === null
-    ) {
+    if (!people || !startDate || !endDate || !budget) {
       Notify.failure("모든 필수 응답을 입력해주세요.", {
         width: "260px",
         fontSize: "15px",
@@ -39,7 +76,36 @@ const SurveyHeader = ({
       return;
     }
 
-    // 제출 로직 추가
+    const requestBody: TravelPlanPreferences = {
+      travel_period: {
+        start_date: startDate,
+        end_date: endDate,
+      },
+      group: {
+        num_people: people,
+      },
+      budget: {
+        min: 5000,
+        max: budget,
+      },
+      region: region!, // "대한민국 서울특별시"
+      transportation_preferences: transportation,
+      travel_style_preferences: {
+        // 여러 카테고리의 선호도를 하나로 합쳐 전달
+        prefer: [
+          ...preferTravelPurpose,
+          ...preferAccommodation,
+          ...preferRestaurant,
+        ],
+        nonPrefer: [
+          ...nonPreferTravelPurpose,
+          ...nonPreferAccommodation,
+          ...nonPreferRestaurant,
+        ],
+      },
+    };
+
+    sendSurveyRequestMutate(requestBody);
 
     console.log("제출 완료");
   };

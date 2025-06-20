@@ -14,10 +14,11 @@ const TravelPlanPage = () => {
   const travelStartDate = useDateStore((state) => state.travelStartDate);
   const travelEndDate = useDateStore((state) => state.travelEndDate);
   const openModal = useModalStore((state) => state.openModal);
+  const isEditMode = useScheduleStore((state) => state.isEditMode);
 
   useEffect(() => {
-    useScheduleStore.getState().resetAll();
-  }, []);
+    if (!isEditMode) useScheduleStore.getState().resetAll();
+  }, [isEditMode]);
 
   useEffect(() => {
     if (!travelStartDate || !travelEndDate) {

@@ -12,16 +12,19 @@ const EssentialQuestions = () => {
   });
   const today = new Date().toISOString().split("T")[0]; // yyyy-mm-dd 형식
   const [travelBudget, setTravelBudget] = useState<string>("");
+  const [travelRegion, setTravelRegion] = useState<string>("");
 
   const {
     people,
     startDate,
     endDate,
     budget,
+    region,
     setPeople,
     setStartDate,
     setEndDate,
     setBudget,
+    setRegion,
   } = useEssentialSurveyStore();
 
   // 인원수에 대한 이벤트 핸들러 (제한: 1부터 999까지의 정수)
@@ -84,6 +87,19 @@ const EssentialQuestions = () => {
       setTravelBudget(formatted);
       setBudget(numericValue);
     }
+  };
+
+  // 여행 지역에 대한 이벤트 핸들러 (제한: 한국어만 입력 가능. 영어, 특수문자, 숫자 등등 입력 안되도록)
+  const handleChangeTravelRegion = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 1) 허용 문자만(한글+공백) 남기기
+    const onlyKorean = e.target.value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, "");
+
+    // 2) 중복 공백 정리 → 앞쪽 공백 제거
+    const cleaned = onlyKorean.replace(/\s{2,}/g, " ").trimStart();
+
+    // 3) 로컬 상태 & 전역 상태(스토어) 동시 반영
+    setTravelRegion(cleaned);
+    setRegion(cleaned === "" ? null : cleaned);
   };
 
   return (
@@ -160,6 +176,20 @@ const EssentialQuestions = () => {
             />
           </div>
           <span>원</span>
+        </div>
+      </div>
+      <div>
+        <h1 className="mb-[5px]">4. 여행 지역을 입력해주세요. (대한민국 내)</h1>
+        <div className="flex items-center gap-[5px]">
+          <div className="flex justify-between items-center px-[7px] ml-[12px] w-[240px] h-[30px] rounded-[4px] border border-[#D2CCCC]">
+            <img src="/images/region.svg" alt="region" className="w-[13px]" />
+            <input
+              type="text"
+              value={region ?? travelRegion}
+              onChange={handleChangeTravelRegion}
+              className="w-[205px] outline-none"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { create } from "zustand";
+import { shallow } from "zustand/shallow";
 import { DailySchedule, ScheduledPlace } from "../types/schedule.type";
 import { Schedule } from "../types/travelPlan.type";
+import { MarkerDTO } from "../types/map.type";
 
 interface ScheduleStore {
   isEditMode: boolean;
@@ -140,27 +142,35 @@ export const useScheduleStore = create<ScheduleStore>()((set) => ({
 
   moveScheduleCard: (daySeq, fromTime, toTime, fromIndex, toIndex, newPeriod) =>
     set((state) => {
-      if (fromTime === toTime) return state; // move는 시간대가 다를 때만!
-      const fromList = [...(state.schedule[daySeq]?.[fromTime] || [])];
-      if (!fromList[fromIndex]) return state;
-      const card = {
-        ...fromList[fromIndex],
-        period: newPeriod ?? fromList[fromIndex].period,
-      };
-      fromList.splice(fromIndex, 1);
+      /* 시간대가 같으면 reorder 로 처리하므로 여기선 무시 */
+      if (fromTime === toTime) return state;
 
-      const toList = [...(state.schedule[daySeq]?.[toTime] || [])];
-      toList.splice(toIndex, 0, card);
+      /* 1️⃣ 하루치 스케줄 깊은 복사 */
+      const day = { ...(state.schedule[daySeq] ?? {}) };
 
-      const newDaySchedule = { ...state.schedule[daySeq] };
-      newDaySchedule[fromTime] = fromList;
-      if (fromList.length === 0) delete newDaySchedule[fromTime];
-      newDaySchedule[toTime] = toList;
+      /* 2️⃣ source 배열에서 카드 꺼내기 */
+      const fromArr = [...(day[fromTime] ?? [])];
+      const target = fromArr.splice(fromIndex, 1)[0];
+      if (!target) return state; // 잘못된 인덱스 guard
 
+      /* 3️⃣ period 수정 (필요할 때만) */
+      const movedCard = { ...target, period: newPeriod ?? target.period };
+
+      /* 4️⃣ fromTime 배열이 비면 key 제거 */
+      if (fromArr.length) day[fromTime] = fromArr;
+      else delete day[fromTime];
+
+      /* 5️⃣ dest 배열에 삽입 */
+      const toArr = [...(day[toTime] ?? [])];
+      const safeIndex = Math.max(0, Math.min(toArr.length, toIndex)); // 범위 보정
+      toArr.splice(safeIndex, 0, movedCard);
+      day[toTime] = toArr;
+
+      /* 6️⃣ 최종 상태 반환 */
       return {
         schedule: {
           ...state.schedule,
-          [daySeq]: newDaySchedule,
+          [daySeq]: day,
         },
       };
     }),
@@ -183,6 +193,7 @@ export const useScheduleStore = create<ScheduleStore>()((set) => ({
         },
       };
     }),
+
   resetAll: () =>
     set({
       isEditMode: false,
@@ -190,3 +201,35 @@ export const useScheduleStore = create<ScheduleStore>()((set) => ({
       schedule: {}, // ✨ 핵심: 스케줄 비우기
     }),
 }));
+
+export const useScheduleMarkers: () => MarkerDTO[] = () =>
+  useScheduleStore(
+    (state) => {
+      const out: MarkerDTO[] = [];
+
+      Object.entries(state.schedule).forEach(([dayKey, byTime]) => {
+        const daySeq = Number(dayKey);
+        let order = 1;
+
+        Object.keys(byTime)
+          .sort() // 시간 순서
+          .forEach((t) => {
+            byTime[t].forEach((p) => {
+              if (p.latitude === 0 && p.longitude === 0) return; // 좌표 없는 카드 skip
+              out.push({
+                id: `${daySeq}-${t}-${order}`,
+                daySeq,
+                order: order++,
+                lat: p.latitude,
+                lng: p.longitude,
+                placeName: p.placeName,
+              });
+            });
+          });
+      });
+
+      return out;
+    },
+    //@ts-ignore
+    shallow // equality 함수는 여기서 한 번만!
+  );

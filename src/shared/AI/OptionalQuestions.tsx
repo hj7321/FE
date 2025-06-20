@@ -1,3 +1,4 @@
+import { TRANSPORT_OPTIONS } from "../../constants/transport";
 import PreferenceButton from "./PreferenceButton";
 import TransportationButton from "./TransportationButton";
 
@@ -7,11 +8,9 @@ const OptionalQuestions = () => {
       <div>
         <h1 className="mb-[5px]">1. 어떤 교통수단을 이용하실 예정인가요?</h1>
         <div className="ml-[12px] flex gap-[10px]">
-          <TransportationButton buttonName="버스" />
-          <TransportationButton buttonName="택시" />
-          <TransportationButton buttonName="지하철" />
-          <TransportationButton buttonName="렌트카" />
-          <TransportationButton buttonName="도보" />
+          {TRANSPORT_OPTIONS.map((option) => (
+            <TransportationButton buttonName={option} />
+          ))}
         </div>
       </div>
       <div>

@@ -1,8 +1,9 @@
 import clsx from "clsx";
 import { useOptionalSurveyStore } from "../../stores/optionalSurvey.store";
+import { Transportation } from "../../types/survey.type";
 
 interface TransportationButtonProps {
-  buttonName: string;
+  buttonName: Transportation;
 }
 
 const TransportationButton = ({ buttonName }: TransportationButtonProps) => {

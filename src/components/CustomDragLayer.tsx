@@ -43,6 +43,9 @@ const CustomDragLayer = () => {
             placeId={item.placeId}
             placeType={item.placeType}
             isFavorite={item.isFavorite}
+            address={item.address}
+            latitude={item.latitude}
+            longitude={item.longitude}
             isDragPreview // 드래그 프리뷰임을 표시하는 prop
           />
         )}
@@ -57,6 +60,9 @@ const CustomDragLayer = () => {
             daySeq={item.daySeq}
             time={item.time}
             index={item.index}
+            // address={item.address}
+            latitude={item.latitude}
+            longitude={item.longitude}
             isDragPreview // 드래그 프리뷰임을 표시하는 prop
           />
         )}
