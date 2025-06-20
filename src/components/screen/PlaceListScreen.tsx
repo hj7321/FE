@@ -31,11 +31,9 @@ const PlaceListScreen = () => {
   const [nearbyRequested, setNearbyRequested] = useState<boolean>(false);
   const textSearchInputRef = useRef<HTMLInputElement>(null);
   const [textSearchValue, setTextSearchValue] = useState<string>("");
-  // const [latLng, setLatLng] = useState<LatLng>({ latitude: 0, longitude: 0 });
   const countryName = useFavoriteListStore((state) => state.countryName);
   const regionName = useFavoriteListStore((state) => state.regionName);
   const { lat, lng } = useMapStore((state) => state.center);
-  // const isAIMode = useScheduleStore((state) => state.isAIMode);
 
   const basketPlaces = useReadBasket(countryName!, regionName!);
 

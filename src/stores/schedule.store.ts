@@ -9,9 +9,6 @@ interface ScheduleStore {
   isEditMode: boolean;
   setEditModeOn: () => void;
   setEditModeOff: () => void;
-  isAIMode: boolean;
-  setAIModeOn: () => void;
-  setAIModeOff: () => void;
   meta: Schedule | null;
   setMeta: (meta: Schedule) => void;
   schedule: {
@@ -57,9 +54,6 @@ export const useScheduleStore = create<ScheduleStore>()(
       isEditMode: false,
       setEditModeOn: () => set({ isEditMode: true }),
       setEditModeOff: () => set({ isEditMode: false }),
-      isAIMode: false,
-      setAIModeOn: () => set({ isAIMode: true }),
-      setAIModeOff: () => set({ isAIMode: false }),
       meta: null,
       setMeta: (meta) => set({ meta }),
       schedule: {}, // 초기 스케줄은 빈 객체

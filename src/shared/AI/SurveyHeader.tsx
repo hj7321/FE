@@ -8,7 +8,6 @@ import { TravelPlanPreferences } from "../../types/survey.type";
 import { parseDetailSchedule } from "../../utils/parseDetailSchedult";
 import { useDateStore } from "../../stores/date.store";
 import { useScheduleStore } from "../../stores/schedule.store";
-import { useFavoriteListStore } from "../../stores/favoriteList.store";
 import { useNavigate } from "react-router";
 
 interface SurveyHeaderProps {
@@ -41,11 +40,9 @@ const SurveyHeader = ({
     reset: resetOptional,
   } = useOptionalSurveyStore();
   const setDates = useDateStore((state) => state.setDates);
-  const setAIModeOn = useScheduleStore((state) => state.setAIModeOn);
   const setMeta = useScheduleStore((state) => state.setMeta);
   const setSchedule = useScheduleStore((state) => state.setSchedule);
   const navigate = useNavigate();
-  const favStore = useFavoriteListStore.getState();
 
   const { mutate: sendSurveyRequestMutate } = useMutation({
     mutationKey: ["sendSurveyRequest"],
@@ -68,31 +65,9 @@ const SurveyHeader = ({
         countryName: data.countryName,
         regionName: data.regionName,
       });
-      const firstDayKey = Math.min(...Object.keys(schedule).map(Number)); // 가장 빠른 daySeq
-      const firstDay = schedule[firstDayKey];
-      if (firstDay) {
-        const firstTimeKey = Object.keys(firstDay).sort()[0]; // 가장 이른 시간
-        const firstPlace = firstDay[firstTimeKey]?.[0];
-
-        if (firstPlace) {
-          favStore.resetAllList(); // 기존 장바구니 비우기
-          favStore.setCountryName(data.countryName);
-          favStore.setRegionName(data.regionName);
-          favStore.updateAddList({
-            placeId: firstPlace.placeId,
-            placeName: firstPlace.placeName,
-            placeType: firstPlace.placeType,
-            photoUrl: undefined,
-            address: firstPlace.address,
-            latitude: firstPlace.latitude,
-            longitude: firstPlace.longitude,
-          });
-        }
-      }
 
       setSchedule(schedule);
       console.log("스케줄 확인:", schedule);
-      setAIModeOn();
       navigate("/travel-plan");
       resetEssential();
       resetOptional();
