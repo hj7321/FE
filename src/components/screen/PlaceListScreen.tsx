@@ -35,7 +35,7 @@ const PlaceListScreen = () => {
   const countryName = useFavoriteListStore((state) => state.countryName);
   const regionName = useFavoriteListStore((state) => state.regionName);
   const { lat, lng } = useMapStore((state) => state.center);
-  const isAIMode = useScheduleStore((state) => state.isAIMode);
+  // const isAIMode = useScheduleStore((state) => state.isAIMode);
 
   const basketPlaces = useReadBasket(countryName!, regionName!);
 

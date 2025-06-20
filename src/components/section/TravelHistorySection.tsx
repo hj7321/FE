@@ -82,9 +82,9 @@ const TravelHistorySection = ({
         {displayedPlans.map((plan) => (
           <TravelPlanCard
             key={plan.scheduleId}
-            cardId={plan.scheduleId}
+            cardId={plan.scheduleId!}
             cardImg={`/images/cities/${plan.regionName}.webp`}
-            travelTitle={plan.scheduleName}
+            travelTitle={plan.scheduleName!}
             travelStartDate={plan.startDate}
             travelEndDate={plan.endDate}
             travelPeople={plan.howManyPeople}
